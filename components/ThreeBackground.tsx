@@ -4,16 +4,19 @@ import { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Environment } from '@react-three/drei';
 import * as THREE from 'three';
+
 import { useTheme } from 'next-themes';
 
-function SolidGlassGallery({ scrollY, themeMode }: { scrollY: number, themeMode: string }) {
+function SolidGlassGallery({ scrollY }: { scrollY: number }) {
+  const { theme } = useTheme();
+  const isDark = theme !== 'light';
+
   const groupRef = useRef<THREE.Group>(null);
   const shape1Ref = useRef<THREE.Mesh>(null);
   const shape2Ref = useRef<THREE.Mesh>(null);
   const shape3Ref = useRef<THREE.Mesh>(null);
   const shape4Ref = useRef<THREE.Mesh>(null);
   const lightRef = useRef<THREE.PointLight>(null);
-  const materialRef = useRef<THREE.MeshPhysicalMaterial>(null);
 
   const mousePosition = useRef({ x: 0, y: 0 });
 
@@ -82,26 +85,19 @@ function SolidGlassGallery({ scrollY, themeMode }: { scrollY: number, themeMode:
       groupRef.current.rotation.x = THREE.MathUtils.damp(groupRef.current.rotation.x, targetGroupRotX, 3, delta);
       groupRef.current.rotation.y = THREE.MathUtils.damp(groupRef.current.rotation.y, targetGroupRotY, 3, delta);
     }
-    
-    // 5. Dynamic Theme Material Morphing
-    if (materialRef.current) {
-      const targetColor = new THREE.Color(themeMode === 'light' ? '#ffffff' : '#050505');
-      materialRef.current.color.lerp(targetColor, 0.05);
-    }
   });
 
-  // Reusable ultra-premium glass material (Optimized for 60fps Single-Pass Rendering)
+  // Reusable ultra-premium glass material
   const glassMaterial = (
     <meshPhysicalMaterial
-      ref={materialRef}
-      color="#050505"
-      metalness={1.0}
-      roughness={0.05} // Very slight roughness to catch light
+      color={isDark ? "#050505" : "#ffffff"}
+      metalness={isDark ? 1.0 : 0.4}
+      roughness={isDark ? 0.05 : 0.1}
       clearcoat={1.0}
       clearcoatRoughness={0.1}
       transparent={true}
-      opacity={0.4} // Transparent instead of transmissive (saves massive GPU)
-      envMapIntensity={4.0} // Ultra-bright reflections to fake refraction
+      opacity={isDark ? 0.4 : 0.6}
+      envMapIntensity={isDark ? 4.0 : 2.0}
     />
   );
 
@@ -135,9 +131,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 
 export default function ThreeBackground() {
   const [scrollYValue, setScrollYValue] = useState(0);
-  const [isDesktop, setIsDesktop] = useState(true);
   const { scrollY } = useScroll();
-  const { theme } = useTheme();
 
   // Crossfade: ThreeBackground starts completely invisible (0) and fades in as you scroll down
   const opacityFadeIn = useTransform(scrollY, [0, 400], [0, 0.95]);
@@ -162,7 +156,7 @@ export default function ThreeBackground() {
         dpr={[1, 1.5]}
         gl={{ antialias: false, alpha: true, powerPreference: "high-performance" }}
       >
-        <SolidGlassGallery scrollY={scrollYValue} themeMode={theme || 'dark'} />
+        <SolidGlassGallery scrollY={scrollYValue} />
         <Environment preset="city" />
       </Canvas>
     </motion.div>

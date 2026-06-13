@@ -61,7 +61,7 @@ export default function TiltCard({
         rotateY,
         transformStyle: "preserve-3d",
       }}
-      className={`relative rounded-2xl border border-theme-border bg-black/40 backdrop-blur-sm group overflow-hidden ${className}`}
+      className={`relative rounded-2xl border border-black/10 dark:border-white/10 transition-colors duration-700 bg-black/40 backdrop-blur-sm group overflow-hidden ${className}`}
     >
       {/* Subtle cursor glow that follows mouse inside the card */}
       <motion.div

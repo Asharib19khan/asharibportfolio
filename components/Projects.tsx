@@ -25,28 +25,28 @@ function ProjectCard({ proj }: { proj: any }) {
     <TiltCard className="project-card h-full min-h-[400px]">
       <div className="p-10 flex flex-col h-full justify-between">
         <div>
-          <h3 className="text-3xl md:text-[40px] font-heading font-bold text-theme-text mb-6 leading-[1.1] tracking-tight hover:text-theme-text transition-colors">
+          <h3 className="text-3xl md:text-[40px] font-heading font-bold text-black dark:text-white transition-colors duration-700 mb-6 leading-[1.1] tracking-tight hover:text-black dark:text-white transition-colors duration-700 transition-colors">
             <ScrambleText text={proj.title} />
           </h3>
-          <p className="text-theme-muted font-body text-base leading-[1.8] mb-8">
+          <p className="text-gray-600 dark:text-gray-400 transition-colors duration-700 font-body text-base leading-[1.8] mb-8">
             {proj.description}
           </p>
           <div className="flex flex-wrap gap-2 mb-12">
             {proj.tech.map((t: string, idx: number) => (
-              <span key={idx} className="text-[10px] font-heading tracking-[0.2em] uppercase text-theme-text bg-theme-glass px-4 py-2 rounded-full cursor-crosshair hover:bg-theme-glass transition-colors">
+              <span key={idx} className="text-[10px] font-heading tracking-[0.2em] uppercase text-black dark:text-white transition-colors duration-700 bg-black/5 dark:bg-white/5 transition-colors duration-700 px-4 py-2 rounded-full cursor-crosshair hover:bg-black/5 dark:bg-white/5 transition-colors duration-700 transition-colors">
                 <ScrambleText text={t} />
               </span>
             ))}
           </div>
         </div>
         
-        <div className="flex items-center gap-6 mt-auto border-t border-theme-border pt-6">
+        <div className="flex items-center gap-6 mt-auto border-t border-black/10 dark:border-white/10 transition-colors duration-700 pt-6">
           {proj.github && (
             <a 
               href={proj.github} 
               target="_blank" 
               rel="noreferrer"
-              className="magnetic flex items-center gap-2 text-[11px] font-heading uppercase tracking-[0.3em] text-theme-muted hover:text-theme-text transition-colors"
+              className="magnetic flex items-center gap-2 text-[11px] font-heading uppercase tracking-[0.3em] text-gray-600 dark:text-gray-400 transition-colors duration-700 hover:text-black dark:text-white transition-colors duration-700 transition-colors"
             >
               <GithubIcon className="w-4 h-4" /> Source
             </a>
@@ -56,7 +56,7 @@ function ProjectCard({ proj }: { proj: any }) {
               href={proj.link} 
               target="_blank" 
               rel="noreferrer"
-              className="magnetic flex items-center gap-2 text-[11px] font-heading uppercase tracking-[0.3em] text-theme-muted hover:text-theme-text transition-colors"
+              className="magnetic flex items-center gap-2 text-[11px] font-heading uppercase tracking-[0.3em] text-gray-600 dark:text-gray-400 transition-colors duration-700 hover:text-black dark:text-white transition-colors duration-700 transition-colors"
             >
               <ExternalLinkIcon className="w-4 h-4" /> Live
             </a>
@@ -71,7 +71,7 @@ export default function Projects() {
   const headingChars = "Selected Works".split("");
   
   return (
-    <section id="projects" className="relative z-10 w-full py-32 px-6 md:px-12 max-w-[1400px] mx-auto border-t border-theme-border">
+    <section id="projects" className="relative z-10 w-full py-32 px-6 md:px-12 max-w-[1400px] mx-auto border-t border-black/10 dark:border-white/10 transition-colors duration-700">
       <motion.h2 
         initial="hidden"
         whileInView="visible"
@@ -80,7 +80,7 @@ export default function Projects() {
           visible: { transition: { staggerChildren: 0.05 } },
           hidden: {}
         }}
-        className="flex text-[12px] font-heading tracking-[0.4em] text-theme-muted mb-20 uppercase overflow-hidden"
+        className="flex text-[12px] font-heading tracking-[0.4em] text-gray-600 dark:text-gray-400 transition-colors duration-700 mb-20 uppercase overflow-hidden"
       >
         {headingChars.map((char, index) => (
           <motion.span 

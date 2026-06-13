@@ -5,13 +5,13 @@ import { CERTIFICATIONS } from '../constants/content';
 
 export default function Certifications() {
   return (
-    <section id="achievements" className="relative z-10 w-full py-32 px-6 md:px-12 max-w-[1400px] mx-auto border-t border-theme-border">
+    <section id="achievements" className="relative z-10 w-full py-32 px-6 md:px-12 max-w-[1400px] mx-auto border-t border-black/10 dark:border-white/10 transition-colors duration-700">
       <motion.h2 
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.8, ease: "easeOut" }}
-        className="text-[12px] font-heading tracking-[0.4em] text-theme-muted mb-16 uppercase"
+        className="text-[12px] font-heading tracking-[0.4em] text-gray-600 dark:text-gray-400 transition-colors duration-700 mb-16 uppercase"
       >
         Achievements
       </motion.h2>
@@ -33,14 +33,14 @@ export default function Certifications() {
               hidden: { opacity: 0, scale: 0.95 },
               show: { opacity: 1, scale: 1, transition: { type: "spring" as const } }
             }}
-            className="flex flex-col justify-center bg-theme-glass border-[0.5px] border-theme-border rounded-[16px] p-6 transition-colors duration-300 hover:border-theme-text hover:bg-theme-glass"
+            className="flex flex-col justify-center bg-black/5 dark:bg-white/5 transition-colors duration-700 border-[0.5px] border-black/10 dark:border-white/10 transition-colors duration-700 rounded-[16px] p-6 transition-colors duration-300 hover:border-theme-text hover:bg-black/5 dark:bg-white/5 transition-colors duration-700"
           >
-            <h3 className="text-[15px] font-body font-bold text-theme-text mb-3">
+            <h3 className="text-[15px] font-body font-bold text-black dark:text-white transition-colors duration-700 mb-3">
               {cert.name}
             </h3>
             <div className="flex justify-between items-center w-full">
-              <span className="text-[12px] font-body text-theme-muted uppercase tracking-[0.1em]">{cert.org}</span>
-              <span className="text-[11px] font-heading text-theme-muted tracking-[0.2em]">{cert.date}</span>
+              <span className="text-[12px] font-body text-gray-600 dark:text-gray-400 transition-colors duration-700 uppercase tracking-[0.1em]">{cert.org}</span>
+              <span className="text-[11px] font-heading text-gray-600 dark:text-gray-400 transition-colors duration-700 tracking-[0.2em]">{cert.date}</span>
             </div>
           </motion.div>
         ))}

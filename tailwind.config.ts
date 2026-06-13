@@ -10,13 +10,6 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        theme: {
-          bg: 'var(--bg-primary)',
-          text: 'var(--text-primary)',
-          muted: 'var(--text-secondary)',
-          border: 'var(--border-color)',
-          glass: 'var(--glass-bg)',
-        },
         void: '#000000',
         ice: '#FFFFFF',
         muted: '#888888',

@@ -9,7 +9,7 @@ import { Spotlight } from "@/components/ui/spotlight";
 
 export default function Hero() {
   return (
-    <section id="home" className="relative w-full h-screen flex flex-col items-center justify-center px-6 z-10 overflow-hidden bg-theme-bg">
+    <section id="home" className="relative w-full h-screen flex flex-col items-center justify-center px-6 z-10 overflow-hidden bg-white dark:bg-[#050505] transition-colors duration-700">
       {/* Dramatic Spotlight from the top left */}
       <Spotlight className="-top-40 left-0 md:left-60 md:-top-20" size={150} />
 
@@ -28,7 +28,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.5, ease: "easeOut" }}
-            className="text-5xl md:text-[80px] font-heading font-black text-theme-text leading-[0.9] uppercase mb-6 bg-clip-text text-transparent bg-gradient-to-b from-theme-text to-theme-muted"
+            className="text-5xl md:text-[80px] font-heading font-black text-black dark:text-white transition-colors duration-700 leading-[0.9] uppercase mb-6 bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400"
           >
             {BRAND.name}
           </motion.h1>
@@ -36,7 +36,7 @@ export default function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 1 }}
-            className="text-theme-muted font-body text-sm md:text-lg tracking-[0.3em] uppercase max-w-lg mb-10"
+            className="text-gray-600 dark:text-gray-400 transition-colors duration-700 font-body text-sm md:text-lg tracking-[0.3em] uppercase max-w-lg mb-10"
           >
             {BRAND.role}
           </motion.p>
@@ -49,7 +49,7 @@ export default function Hero() {
           >
             <MagneticButton
               onClick={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}
-              className="bg-theme-text text-theme-bg font-heading font-bold text-xs tracking-[0.2em] uppercase px-8 py-4 hover:opacity-80 transition-colors rounded-full"
+              className="bg-white text-black font-heading font-bold text-xs tracking-[0.2em] uppercase px-8 py-4 hover:bg-gray-200 transition-colors rounded-full"
             >
               View Work
             </MagneticButton>
@@ -64,12 +64,12 @@ export default function Hero() {
         transition={{ delay: 2.5, duration: 1 }}
         className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 pointer-events-none"
       >
-        <span className="text-[10px] uppercase tracking-[0.4em] font-heading text-theme-muted">Scroll</span>
-        <div className="w-[1px] h-16 bg-theme-glass relative overflow-hidden">
+        <span className="text-[10px] uppercase tracking-[0.4em] font-heading text-gray-500">Scroll</span>
+        <div className="w-[1px] h-16 bg-black/5 dark:bg-white/5 transition-colors duration-700 relative overflow-hidden">
           <motion.div
             animate={{ y: ['-100%', '100%'] }}
             transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-            className="absolute top-0 left-0 w-full h-full bg-theme-text"
+            className="absolute top-0 left-0 w-full h-full bg-white"
           />
         </div>
       </motion.div>

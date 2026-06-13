@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { motion, useScroll, useMotionValueEvent } from 'framer-motion';
+import ThemeToggle from './ThemeToggle';
 
 // Matching SphereLayout chunks:
 // c0=0, c1=1/6, c2=2/6, c3=3/6, c4=4/6, c5=5/6, c6=1
@@ -71,7 +72,7 @@ export default function Navbar() {
       className="fixed top-6 left-1/2 -translate-x-1/2 z-50 pointer-events-auto"
     >
       <nav 
-        className="flex items-center gap-1 p-1.5 rounded-full bg-black/10 backdrop-blur-3xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-theme-border relative overflow-x-auto max-w-[90vw] no-scrollbar"
+        className="flex items-center gap-1 p-1.5 rounded-full bg-black/5 dark:bg-white/50 dark:bg-black/10 backdrop-blur-3xl shadow-[0_8px_32px_rgba(0,0,0,0.1)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-black/5 dark:border-black/10 dark:border-white/10 relative overflow-x-auto max-w-[90vw] no-scrollbar"
         onMouseLeave={() => setHoveredId(null)}
       >
         {NAV_ITEMS.map((item) => {
@@ -85,7 +86,7 @@ export default function Navbar() {
               onClick={(e) => handleClick(e, item.chunk)}
               onMouseEnter={() => setHoveredId(item.id)}
               className={`relative px-4 md:px-5 py-2 md:py-2.5 rounded-full text-[10px] md:text-xs font-heading tracking-[0.1em] uppercase transition-colors duration-300 z-10 whitespace-nowrap ${
-                isActive ? 'text-theme-text font-bold' : 'text-theme-muted hover:text-theme-text'
+                isActive ? 'text-black dark:text-white font-bold' : 'text-gray-500 dark:text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-black dark:text-white'
               }`}
             >
               {item.label}
@@ -93,7 +94,7 @@ export default function Navbar() {
               {isActive && (
                 <motion.div 
                   layoutId="activeNavIndicator"
-                  className="absolute inset-0 bg-theme-glass border border-theme-border rounded-full -z-10 shadow-[0_0_15px_rgba(255,255,255,0.05)]"
+                  className="absolute inset-0 bg-black/5 dark:bg-black/10 dark:bg-white/10 border border-black/10 dark:border-white/20 rounded-full -z-10 shadow-[0_0_15px_rgba(0,0,0,0.05)] dark:shadow-[0_0_15px_rgba(255,255,255,0.05)]"
                   transition={{ type: "spring" as const, bounce: 0.15, duration: 0.5 }}
                 />
               )}
@@ -101,13 +102,16 @@ export default function Navbar() {
               {isHovered && !isActive && (
                 <motion.div 
                   layoutId="hoverNavIndicator"
-                  className="absolute inset-0 bg-theme-glass rounded-full -z-20"
+                  className="absolute inset-0 bg-black/5 dark:bg-white/5 rounded-full -z-20"
                   transition={{ type: "spring" as const, bounce: 0.15, duration: 0.4 }}
                 />
               )}
             </a>
           );
         })}
+
+        <div className="w-[1px] h-6 bg-black/10 dark:bg-black/10 dark:bg-white/10 mx-1" />
+        <ThemeToggle />
       </nav>
     </motion.div>
   );

@@ -30,7 +30,7 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" className="relative z-10 w-full min-h-[80vh] flex flex-col items-center justify-center px-6 border-t border-theme-border">
+    <section id="contact" className="relative z-10 w-full min-h-[80vh] flex flex-col items-center justify-center px-6 border-t border-black/10 dark:border-white/10 transition-colors duration-700">
       <motion.div 
         variants={containerVariants}
         initial="hidden"
@@ -38,15 +38,15 @@ export default function Contact() {
         viewport={{ once: true, margin: "-100px" }}
         className="flex flex-col items-center"
       >
-        <motion.h2 variants={itemVariants} className="text-[12vw] md:text-[80px] lg:text-[100px] font-heading font-black text-theme-text leading-[0.9] tracking-tighter text-center uppercase mb-12">
+        <motion.h2 variants={itemVariants} className="text-[12vw] md:text-[80px] lg:text-[100px] font-heading font-black text-black dark:text-white transition-colors duration-700 leading-[0.9] tracking-tighter text-center uppercase mb-12">
           Let's Build<br />
-          <span className="text-theme-muted">Something.</span>
+          <span className="text-gray-600 dark:text-gray-400 transition-colors duration-700">Something.</span>
         </motion.h2>
         
         <motion.a 
           variants={itemVariants}
           href={`mailto:${BRAND.email}`}
-          className="text-lg md:text-2xl font-heading text-theme-text border-b border-theme-border pb-2 mb-12 hover:text-gray-300 hover:border-gray-300 transition-colors tracking-wide"
+          className="text-lg md:text-2xl font-heading text-black dark:text-white transition-colors duration-700 border-b border-black/10 dark:border-white/10 transition-colors duration-700 pb-2 mb-12 hover:text-gray-300 hover:border-gray-300 transition-colors tracking-wide"
         >
           {BRAND.email}
         </motion.a>
@@ -56,7 +56,7 @@ export default function Contact() {
             href={BRAND.linkedin} 
             target="_blank" 
             rel="noreferrer"
-            className="text-gray-500 hover:text-theme-text transition-colors"
+            className="text-gray-500 hover:text-black dark:text-white transition-colors duration-700 transition-colors"
             aria-label="LinkedIn"
           >
             <LinkedinIcon className="w-8 h-8" />
@@ -65,7 +65,7 @@ export default function Contact() {
             href={BRAND.github} 
             target="_blank" 
             rel="noreferrer"
-            className="text-gray-500 hover:text-theme-text transition-colors"
+            className="text-gray-500 hover:text-black dark:text-white transition-colors duration-700 transition-colors"
             aria-label="GitHub"
           >
             <GithubIcon className="w-8 h-8" />

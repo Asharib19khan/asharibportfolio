@@ -1,68 +1,69 @@
 "use client";
 
 import { useTheme } from "next-themes";
-import { motion, useMotionValue, useTransform, useAnimation } from "framer-motion";
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 
 export default function ThemeToggle() {
-  const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  const y = useMotionValue(0);
-  const controls = useAnimation();
+  const { theme, setTheme } = useTheme();
 
+  // useEffect only runs on the client, so now we can safely show the UI
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  const handleDragEnd = (event: any, info: any) => {
-    if (info.offset.y > 100) {
-      // Toggle Theme
-      setTheme(theme === "dark" ? "light" : "dark");
-      // Snap sound / vibration effect could go here
-      if (typeof window !== "undefined" && window.navigator && window.navigator.vibrate) {
-        window.navigator.vibrate(50);
-      }
-    }
-    // Snap back up
-    controls.start({ y: 0, transition: { type: "spring", stiffness: 300, damping: 10 } });
-  };
+  if (!mounted) {
+    return <div className="w-8 h-8 rounded-full" />;
+  }
 
-  // String stretches and fades color based on pull
-  const stringColor = useTransform(y, [0, 150], ["var(--text-secondary)", "var(--text-primary)"]);
-  const glowOpacity = useTransform(y, [0, 150], [0, 1]);
-
-  if (!mounted) return null;
+  const isDark = theme === "dark";
 
   return (
-    <div className="fixed top-0 right-8 md:right-16 z-[100] h-[300px] pointer-events-none flex flex-col items-center">
-      {/* The physical string */}
-      <motion.div 
-        className="w-[2px] bg-theme-muted origin-top"
-        style={{ 
-          height: y, 
-          minHeight: "40px",
-          backgroundColor: stringColor 
-        }}
-      />
-      
-      {/* The draggable handle */}
+    <motion.button
+      onClick={() => setTheme(isDark ? "light" : "dark")}
+      className="relative flex items-center justify-center w-8 h-8 rounded-full bg-black/10 dark:bg-black/10 dark:bg-white/10 border border-black/10 dark:border-white/10 text-gray-800 dark:text-gray-200 hover:text-black dark:hover:text-black dark:text-white transition-colors overflow-hidden"
+      whileTap={{ scale: 0.9 }}
+      whileHover={{ scale: 1.05 }}
+      aria-label="Toggle Dark Mode"
+    >
       <motion.div
-        drag="y"
-        dragConstraints={{ top: 0, bottom: 0 }}
-        dragElastic={0.8}
-        onDragEnd={handleDragEnd}
-        animate={controls}
-        style={{ y }}
-        className="w-8 h-12 rounded-full cursor-grab active:cursor-grabbing pointer-events-auto relative shadow-[0_4px_20px_rgba(0,0,0,0.3)] dark:shadow-[0_4px_20px_rgba(255,255,255,0.1)] border border-theme-border bg-theme-glass backdrop-blur-md flex items-end justify-center pb-2 transition-colors"
+        initial={false}
+        animate={{
+          scale: isDark ? 1 : 0,
+          opacity: isDark ? 1 : 0,
+          rotate: isDark ? 0 : -90,
+        }}
+        transition={{ type: "spring", stiffness: 200, damping: 10 }}
+        className="absolute inset-0 flex items-center justify-center"
       >
-        <div className="w-4 h-4 rounded-full bg-theme-text opacity-50" />
-        
-        {/* Glow effect when pulling down */}
-        <motion.div 
-          className="absolute inset-0 rounded-full bg-theme-text blur-md -z-10"
-          style={{ opacity: glowOpacity }}
-        />
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
       </motion.div>
-    </div>
+
+      <motion.div
+        initial={false}
+        animate={{
+          scale: isDark ? 0 : 1,
+          opacity: isDark ? 0 : 1,
+          rotate: isDark ? 90 : 0,
+        }}
+        transition={{ type: "spring", stiffness: 200, damping: 10 }}
+        className="absolute inset-0 flex items-center justify-center"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+      </motion.div>
+    </motion.button>
   );
 }

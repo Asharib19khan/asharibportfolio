@@ -48,7 +48,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.5, ease: "easeOut" }}
-            className="text-4xl md:text-[80px] font-heading font-black text-black dark:text-white transition-colors duration-700 leading-[0.9] uppercase mb-6 bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400"
+            className="text-5xl md:text-[80px] font-heading font-black text-black dark:text-white transition-colors duration-700 leading-[0.9] uppercase mb-6 bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400"
           >
             {BRAND.name}
           </motion.h1>

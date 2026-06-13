@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
 interface SphereLayoutProps {
@@ -17,25 +17,12 @@ export default function SphereLayout({
   hero, about, skills, projects, education, certifications, contact
 }: SphereLayoutProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    handleResize(); // Initial check
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"]
   });
 
   const c0 = 0, c1 = 1/6, c2 = 2/6, c3 = 3/6, c4 = 4/6, c5 = 5/6, c6 = 1;
-
-  // The isMobile block was here, moved to the bottom
 
   // Optimize Performance: Use visibility instead of display to prevent massive DOM layout reflows (hanging)
   const heroVis = useTransform(scrollYProgress, v => v <= c1 + 0.05 ? "visible" : "hidden");
@@ -85,20 +72,6 @@ export default function SphereLayout({
   // Common wrapper class to center everything properly and fill screen.
   // Performance: Removed will-change to prevent VRAM exhaustion on mobile devices when stacking 7 full-screen GPU layers.
   const wrapperClass = "absolute inset-0 w-full h-full flex justify-center items-center overflow-hidden";
-
-  if (isMobile) {
-    return (
-      <div className="w-full flex flex-col items-center overflow-x-hidden pt-20">
-        {hero}
-        {about}
-        {skills}
-        {projects}
-        {education}
-        {certifications}
-        {contact}
-      </div>
-    );
-  }
 
   return (
     <div ref={containerRef} className="relative w-full h-[1400vh] bg-transparent">

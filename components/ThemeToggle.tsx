@@ -1,135 +1,103 @@
 "use client";
 
 import { useTheme } from "next-themes";
-import { useEffect, useState, useRef } from "react";
-import { motion, useAnimation, PanInfo } from "framer-motion";
-
-const Particles = ({ isDark }: { isDark: boolean }) => {
-  return (
-    <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
-      {[...Array(6)].map((_, i) => (
-        <motion.div
-          key={`${isDark ? 'dark' : 'light'}-particle-${i}`}
-          initial={{ x: 0, y: 0, scale: 0, opacity: 1 }}
-          animate={{
-            x: Math.cos((i * 60 * Math.PI) / 180) * 16,
-            y: Math.sin((i * 60 * Math.PI) / 180) * 16,
-            scale: [0, 1, 0],
-            opacity: [1, 1, 0],
-          }}
-          transition={{ duration: 0.4, ease: "easeOut" }}
-          className={`absolute w-1 h-1 rounded-full ${isDark ? 'bg-white' : 'bg-yellow-400'}`}
-        />
-      ))}
-    </div>
-  );
-};
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 
 export default function ThemeToggle() {
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
-  const [isExploding, setIsExploding] = useState(false);
 
+  // useEffect only runs on the client, so now we can safely show the UI
   useEffect(() => {
     setMounted(true);
   }, []);
 
   if (!mounted) {
-    return <div className="w-14 h-8 rounded-full" />;
+    return <div className="w-8 h-8 rounded-full" />;
   }
 
   const isDark = theme === "dark";
 
-  const handleToggle = () => {
-    setTheme(isDark ? "light" : "dark");
-    setIsExploding(true);
-    setTimeout(() => setIsExploding(false), 400);
-  };
-
-  const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-    // If they drag it more than 10px in the opposite direction, trigger the toggle
-    if (isDark && info.offset.x < -10) {
-      handleToggle();
-    } else if (!isDark && info.offset.x > 10) {
-      handleToggle();
-    }
-  };
-
   return (
-    <div 
-      className="relative flex items-center w-14 h-8 px-1 rounded-full bg-black/5 dark:bg-white/10 border border-black/10 dark:border-white/10 cursor-pointer overflow-visible transition-colors duration-700"
-      onClick={handleToggle}
-      title="Toggle Theme"
+    <motion.button
+      onClick={() => setTheme(isDark ? "light" : "dark")}
+      className="relative flex items-center w-14 h-7 rounded-full overflow-hidden shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)] ring-1 ring-white/10 dark:ring-black/20 focus:outline-none transition-colors"
+      whileTap={{ scale: 0.95 }}
+      aria-label="Toggle Dark Mode"
     >
-      {/* Background track icons (Optional visual guides) */}
-      <div className="absolute inset-0 flex justify-between items-center px-2 pointer-events-none opacity-30">
-        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-black dark:text-white">
-          <circle cx="12" cy="12" r="5"></circle>
-          <line x1="12" y1="1" x2="12" y2="3"></line>
-          <line x1="12" y1="21" x2="12" y2="23"></line>
-          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-          <line x1="1" y1="12" x2="3" y2="12"></line>
-          <line x1="21" y1="12" x2="23" y2="12"></line>
-          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-        </svg>
-        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-black dark:text-white">
-          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-        </svg>
-      </div>
-
+      {/* Dynamic Background */}
       <motion.div
-        className="relative flex items-center justify-center w-6 h-6 rounded-full bg-white dark:bg-[#050505] shadow-[0_2px_10px_rgba(0,0,0,0.1)] dark:shadow-[0_2px_10px_rgba(255,255,255,0.1)] border border-black/5 dark:border-white/20 z-10"
-        layout
-        transition={{
-          type: "spring",
-          stiffness: 400,
-          damping: 25,
-          mass: 1.2
-        }}
+        className="absolute inset-0 z-0"
         animate={{
-          x: isDark ? 24 : 0,
+          background: isDark
+            ? "linear-gradient(to bottom, #0f172a, #1e1b4b)"
+            : "linear-gradient(to bottom, #38bdf8, #bae6fd)",
         }}
-        drag="x"
-        dragConstraints={{ left: isDark ? 24 : 0, right: isDark ? 24 : 0 }}
-        dragElastic={0.4}
-        onDragEnd={handleDragEnd}
-        // Prevent click bubbling when dragging
-        onPointerDown={(e) => e.stopPropagation()}
-      >
-        {isExploding && <Particles isDark={isDark} />}
-        
-        {/* The Eclipsing Orb SVG */}
-        <div className="relative w-4 h-4 overflow-hidden rounded-full">
-          {/* Base Sun */}
-          <motion.div
-            className="absolute inset-0 bg-yellow-400 rounded-full"
-            animate={{
-              scale: isDark ? 1 : 1,
-              opacity: isDark ? 0.3 : 1,
-              backgroundColor: isDark ? '#ffffff' : '#fbbf24'
-            }}
-            transition={{ duration: 0.5 }}
-          />
+        transition={{ duration: 0.5, ease: "easeInOut" }}
+      />
 
-          {/* Eclipsing Moon Mask */}
-          <motion.div
-            className="absolute inset-0 bg-[#050505] rounded-full"
-            initial={false}
-            animate={{
-              x: isDark ? "0%" : "-100%",
-              scale: isDark ? 0.8 : 1
-            }}
-            transition={{
-              type: "spring",
-              stiffness: 300,
-              damping: 25,
-              delay: isDark ? 0 : 0.1
-            }}
-          />
-        </div>
+      {/* Stars (Dark Mode) */}
+      <motion.div
+        className="absolute inset-0 z-0"
+        initial={false}
+        animate={{ opacity: isDark ? 1 : 0, y: isDark ? 0 : 10 }}
+        transition={{ duration: 0.5, ease: "easeInOut" }}
+      >
+        <div className="absolute top-1.5 left-2.5 w-0.5 h-0.5 bg-white rounded-full opacity-80" />
+        <div className="absolute top-3.5 left-5 w-px h-px bg-white rounded-full opacity-60" />
+        <div className="absolute top-2 left-8 w-0.5 h-0.5 bg-white rounded-full opacity-90" />
       </motion.div>
-    </div>
+
+      {/* Clouds (Light Mode) */}
+      <motion.div
+        className="absolute inset-0 z-0"
+        initial={false}
+        animate={{ opacity: isDark ? 0 : 1, y: isDark ? -10 : 0 }}
+        transition={{ duration: 0.5, ease: "easeInOut" }}
+      >
+        <div className="absolute top-2 right-2 w-3 h-1 bg-white/80 rounded-full" />
+        <div className="absolute top-3 right-5 w-2 h-1 bg-white/60 rounded-full" />
+      </motion.div>
+
+      {/* The Celestial Body (Sun/Moon) */}
+      <motion.div
+        className="relative z-10 w-5 h-5 rounded-full shadow-md flex items-center justify-center overflow-hidden"
+        initial={false}
+        animate={{
+          x: isDark ? 32 : 4,
+          // Hop effect
+          y: isDark ? [0, -4, 0] : [0, -4, 0],
+          background: isDark
+            ? "linear-gradient(to bottom right, #f8fafc, #94a3b8)"
+            : "linear-gradient(to bottom right, #fef08a, #f59e0b)",
+        }}
+        transition={{
+          x: { type: "spring", stiffness: 200, damping: 20 },
+          y: { duration: 0.4, ease: "easeInOut" },
+          background: { duration: 0.5 },
+        }}
+      >
+        {/* Moon Craters */}
+        <motion.div
+          className="absolute inset-0"
+          initial={false}
+          animate={{ opacity: isDark ? 1 : 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <div className="absolute top-1 left-1 w-1 h-1 bg-slate-400/50 rounded-full" />
+          <div className="absolute top-2.5 left-2.5 w-1.5 h-1.5 bg-slate-400/50 rounded-full" />
+          <div className="absolute bottom-0.5 right-1 w-1 h-1 bg-slate-400/50 rounded-full" />
+        </motion.div>
+
+        {/* Solar Glow */}
+        <motion.div
+          className="absolute inset-0 shadow-[inset_0_0_4px_rgba(255,255,255,0.8)] rounded-full"
+          initial={false}
+          animate={{ opacity: isDark ? 0 : 1 }}
+          transition={{ duration: 0.3 }}
+        />
+      </motion.div>
+    </motion.button>
   );
 }

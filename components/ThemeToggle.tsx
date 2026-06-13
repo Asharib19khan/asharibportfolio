@@ -8,13 +8,12 @@ export default function ThemeToggle() {
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
 
-  // useEffect only runs on the client, so now we can safely show the UI
   useEffect(() => {
     setMounted(true);
   }, []);
 
   if (!mounted) {
-    return <div className="w-8 h-8 rounded-full" />;
+    return <div className="w-14 h-7 rounded-full" />;
   }
 
   const isDark = theme === "dark";
@@ -22,36 +21,24 @@ export default function ThemeToggle() {
   return (
     <motion.button
       onClick={() => setTheme(isDark ? "light" : "dark")}
-      className="relative flex items-center w-14 h-[28px] p-1 rounded-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 hover:bg-black/10 dark:hover:bg-white/10 transition-colors cursor-pointer"
+      className="relative flex items-center w-14 h-7 p-1 rounded-full cursor-pointer overflow-hidden transition-colors duration-500 border border-black/10 dark:border-white/10"
+      style={{
+        backgroundColor: isDark ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.05)",
+      }}
       whileTap={{ scale: 0.9 }}
       aria-label="Toggle Dark Mode"
     >
-      <motion.div
-        layout
-        initial={false}
-        animate={{
-          x: isDark ? 28 : 0,
-        }}
-        transition={{ type: "spring", stiffness: 300, damping: 25, bounce: 0.2 }}
-        className="absolute w-5 h-5 rounded-full bg-white dark:bg-[#1a1a1a] shadow-[0_2px_8px_rgba(0,0,0,0.1)] dark:shadow-[0_2px_8px_rgba(255,255,255,0.05)] border border-black/5 dark:border-white/10"
-      />
+      {/* Background Micro-Texture */}
+      <div className="absolute inset-0 opacity-20 dark:opacity-40 mix-blend-overlay pointer-events-none" 
+           style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}>
+      </div>
 
-      <div className="relative z-10 flex w-full justify-between px-[3px]">
-        {/* Sun Icon for Light Mode */}
-        <motion.svg
-          animate={{ rotate: isDark ? -90 : 0, scale: isDark ? 0.8 : 1 }}
-          transition={{ type: "spring", stiffness: 200, damping: 10 }}
-          xmlns="http://www.w3.org/2000/svg"
-          width="12"
-          height="12"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className={`transition-colors duration-500 ${isDark ? "text-gray-500" : "text-black"}`}
-        >
+      {/* Sun/Moon Icons baked into the background track */}
+      <div className="absolute inset-0 flex justify-between items-center px-2 pointer-events-none">
+        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400 dark:text-gray-600">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400 dark:text-gray-600">
           <circle cx="12" cy="12" r="5"></circle>
           <line x1="12" y1="1" x2="12" y2="3"></line>
           <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -61,26 +48,33 @@ export default function ThemeToggle() {
           <line x1="21" y1="12" x2="23" y2="12"></line>
           <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
           <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-        </motion.svg>
-
-        {/* Moon Icon for Dark Mode */}
-        <motion.svg
-          animate={{ rotate: isDark ? 0 : 90, scale: isDark ? 1 : 0.8 }}
-          transition={{ type: "spring", stiffness: 200, damping: 10 }}
-          xmlns="http://www.w3.org/2000/svg"
-          width="12"
-          height="12"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className={`transition-colors duration-500 ${isDark ? "text-white" : "text-gray-400"}`}
-        >
-          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-        </motion.svg>
+        </svg>
       </div>
+
+      {/* The Gravity Orb */}
+      <motion.div
+        layout
+        initial={false}
+        animate={{
+          x: isDark ? 0 : 28,
+          backgroundColor: isDark ? "#ffffff" : "#000000",
+        }}
+        transition={{
+          type: "spring",
+          stiffness: 400,
+          damping: 25,
+          mass: 1,
+        }}
+        className="relative z-10 w-5 h-5 rounded-full shadow-lg flex items-center justify-center"
+      >
+        {/* Inner glow/reflection of the orb */}
+        <motion.div 
+          className="absolute inset-0 rounded-full"
+          animate={{
+            boxShadow: isDark ? "inset -2px -2px 4px rgba(0,0,0,0.3)" : "inset 2px 2px 4px rgba(255,255,255,0.5)",
+          }}
+        />
+      </motion.div>
     </motion.button>
   );
 }

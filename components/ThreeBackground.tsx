@@ -105,21 +105,18 @@ function SolidGlassGallery({ scrollY }: { scrollY: number }) {
       {/* Very subtle blue ambient fill */}
       <ambientLight intensity={0.1} color="#4466ff" />
 
-      {/* Shape 2: The Twisted Knot (Slightly Left) */}
       <mesh ref={shape2Ref} position={[-2.5, 0, -5]}>
-        <torusKnotGeometry args={[3, 1, 200, 64]} />
+        <torusKnotGeometry args={[3, 1, 100, 16]} />
         {glassMaterial}
       </mesh>
 
-      {/* Shape 3: The Refractive Ring (Slightly Right) */}
       <mesh ref={shape3Ref} position={[3, 0, -25]}>
-        <torusGeometry args={[4, 1.5, 64, 100]} />
+        <torusGeometry args={[4, 1.5, 32, 48]} />
         {glassMaterial}
       </mesh>
 
-      {/* Shape 4: The Perfect Sphere (Slightly Left) */}
       <mesh ref={shape4Ref} position={[-1.5, 0, -45]}>
-        <sphereGeometry args={[5, 64, 64]} />
+        <sphereGeometry args={[5, 32, 32]} />
         {glassMaterial}
       </mesh>
     </group>
@@ -152,8 +149,8 @@ export default function ThreeBackground() {
     >
       <Canvas 
         camera={{ position: [0, 0, 30], fov: 45 }}
-        dpr={[1, 2]}
-        gl={{ antialias: true, alpha: true }}
+        dpr={[1, 1.5]}
+        gl={{ antialias: false, alpha: true, powerPreference: "high-performance" }}
       >
         <SolidGlassGallery scrollY={scrollYValue} />
         <Environment preset="city" />

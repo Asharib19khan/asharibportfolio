@@ -127,7 +127,6 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 
 export default function ThreeBackground() {
   const [scrollYValue, setScrollYValue] = useState(0);
-  const [isDesktop, setIsDesktop] = useState(true);
   const { scrollY } = useScroll();
   
   // Crossfade: ThreeBackground starts completely invisible (0) and fades in as you scroll down
@@ -138,22 +137,10 @@ export default function ThreeBackground() {
     const handleScroll = () => {
       setScrollYValue(window.scrollY);
     };
-    const checkSize = () => setIsDesktop(window.innerWidth >= 768);
-    checkSize();
-    window.addEventListener('resize', checkSize);
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
-    return () => {
-      window.removeEventListener('resize', checkSize);
-      window.removeEventListener('scroll', handleScroll);
-    };
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  if (!isDesktop) {
-    return (
-      <div className="fixed inset-0 pointer-events-none -z-10 bg-[radial-gradient(circle_at_top_right,rgba(68,102,255,0.15)_0%,transparent_50%),radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.05)_0%,transparent_50%)]" />
-    );
-  }
 
   return (
     <motion.div 

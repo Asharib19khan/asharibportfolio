@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform, useMotionTemplate } from "framer-motion";
 
 export default function TiltCard({
   children,
@@ -67,9 +67,7 @@ export default function TiltCard({
       <motion.div
         className="pointer-events-none absolute -inset-px rounded-2xl opacity-0 transition duration-300 group-hover:opacity-100"
         style={{
-          background: useTransform(
-            () => `radial-gradient(600px circle at ${x.get() * 100 + 50}% ${y.get() * 100 + 50}%, rgba(255,255,255,0.06), transparent 40%)`
-          ),
+          background: useMotionTemplate`radial-gradient(600px circle at ${useTransform(x, v => v * 100 + 50)}% ${useTransform(y, v => v * 100 + 50)}%, rgba(255,255,255,0.06), transparent 40%)`
         }}
       />
       

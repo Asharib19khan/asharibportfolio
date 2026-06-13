@@ -157,7 +157,6 @@ export default function ThreeBackground() {
         gl={{ antialias: false, alpha: true, powerPreference: "high-performance" }}
       >
         <SolidGlassGallery scrollY={scrollYValue} />
-        <Environment preset="city" />
       </Canvas>
     </motion.div>
   );

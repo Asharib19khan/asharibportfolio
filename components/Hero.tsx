@@ -7,7 +7,25 @@ import MagneticButton from './MagneticButton';
 import { SplineScene } from "@/components/ui/splite";
 import { Spotlight } from "@/components/ui/spotlight";
 
+import { useState } from 'react';
+
 export default function Hero() {
+  const [showSpline, setShowSpline] = useState(true);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      // Unmount Spline if scrolled down more than 1000px
+      if (window.scrollY > 1000 && showSpline) {
+        setShowSpline(false);
+      } else if (window.scrollY <= 1000 && !showSpline) {
+        setShowSpline(true);
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [showSpline]);
+
   return (
     <section id="home" className="relative w-full h-screen flex flex-col items-center justify-center px-6 z-10 overflow-hidden bg-white dark:bg-[#050505] transition-colors duration-700">
       {/* Dramatic Spotlight from the top left */}
@@ -16,10 +34,12 @@ export default function Hero() {
       <div className="flex w-full h-full max-w-[1400px] mx-auto items-center">
         {/* Left content: Massive Spline Robot */}
         <div className="flex-1 relative h-full w-full hidden md:block">
-          <SplineScene
-            scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
-            className="w-full h-full absolute scale-[1.15] origin-center translate-y-12 -left-10"
-          />
+          {showSpline && (
+            <SplineScene
+              scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+              className="w-full h-full absolute scale-[1.15] origin-center translate-y-12 -left-10"
+            />
+          )}
         </div>
 
         {/* Right content: Hero Text */}

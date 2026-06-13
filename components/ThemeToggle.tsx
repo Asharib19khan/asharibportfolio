@@ -1,80 +1,134 @@
 "use client";
 
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useState, useRef } from "react";
+import { motion, useMotionValue, useSpring } from "framer-motion";
 
 export default function ThemeToggle() {
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
+
+  const ref = useRef<HTMLButtonElement>(null);
+
+  // Magnetic Physics for the Toggle
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const mouseXSpring = useSpring(x, { stiffness: 300, damping: 20 });
+  const mouseYSpring = useSpring(y, { stiffness: 300, damping: 20 });
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
   if (!mounted) {
-    return <div className="w-14 h-7 rounded-full" />;
+    return <div className="w-8 h-8 rounded-full" />;
   }
 
   const isDark = theme === "dark";
 
+  const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (!ref.current) return;
+    const rect = ref.current.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const distanceX = e.clientX - centerX;
+    const distanceY = e.clientY - centerY;
+    
+    // Magnetic pull limit
+    x.set(distanceX * 0.4);
+    y.set(distanceY * 0.4);
+  };
+
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
+
+  const toggleTheme = () => {
+    setTheme(isDark ? "light" : "dark");
+  };
+
   return (
     <motion.button
-      onClick={() => setTheme(isDark ? "light" : "dark")}
-      className="relative flex items-center w-14 h-7 p-1 rounded-full cursor-pointer overflow-hidden transition-colors duration-500 border border-black/10 dark:border-white/10"
-      style={{
-        backgroundColor: isDark ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.05)",
-      }}
-      whileTap={{ scale: 0.9 }}
-      aria-label="Toggle Dark Mode"
+      ref={ref}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      onClick={toggleTheme}
+      style={{ x: mouseXSpring, y: mouseYSpring }}
+      whileTap={{ scale: 0.8 }}
+      className="relative flex items-center justify-center w-8 h-8 rounded-full bg-transparent border border-black/5 dark:border-white/10 group overflow-hidden cursor-crosshair"
+      aria-label="Toggle Cosmic Theme"
     >
-      {/* Background Micro-Texture */}
-      <div className="absolute inset-0 opacity-20 dark:opacity-40 mix-blend-overlay pointer-events-none" 
-           style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}>
-      </div>
-
-      {/* Sun/Moon Icons baked into the background track */}
-      <div className="absolute inset-0 flex justify-between items-center px-2 pointer-events-none">
-        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400 dark:text-gray-600">
-          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-        </svg>
-        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400 dark:text-gray-600">
-          <circle cx="12" cy="12" r="5"></circle>
-          <line x1="12" y1="1" x2="12" y2="3"></line>
-          <line x1="12" y1="21" x2="12" y2="23"></line>
-          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-          <line x1="1" y1="12" x2="3" y2="12"></line>
-          <line x1="21" y1="12" x2="23" y2="12"></line>
-          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-        </svg>
-      </div>
-
-      {/* The Gravity Orb */}
+      {/* Outer spinning event horizon (Dark Mode only) */}
       <motion.div
-        layout
-        initial={false}
+        animate={{ 
+          rotate: isDark ? 360 : 0, 
+          scale: isDark ? 1 : 0.5,
+          opacity: isDark ? 1 : 0 
+        }}
+        transition={{ 
+          rotate: { repeat: Infinity, duration: 6, ease: "linear" },
+          scale: { type: "spring", stiffness: 100, damping: 20 },
+          opacity: { duration: 0.4 }
+        }}
+        className="absolute inset-[-2px] rounded-full border-[1.5px] border-dashed border-white/40"
+      />
+
+      {/* The Core Orb (Star / Black Hole) */}
+      <motion.div
         animate={{
-          x: isDark ? 0 : 28,
-          backgroundColor: isDark ? "#ffffff" : "#000000",
+          scale: isDark ? 0.35 : 1,
+          backgroundColor: isDark ? "#000000" : "#ffffff",
+          boxShadow: isDark 
+            ? "0 0 10px 2px rgba(255, 255, 255, 0.9), inset 0 0 5px rgba(255,255,255,0.8)" 
+            : "0 0 15px 3px rgba(255, 220, 100, 0.6), inset 0 0 10px rgba(255, 250, 200, 1)"
         }}
-        transition={{
-          type: "spring",
-          stiffness: 400,
-          damping: 25,
-          mass: 1,
-        }}
-        className="relative z-10 w-5 h-5 rounded-full shadow-lg flex items-center justify-center"
+        transition={{ type: "spring", stiffness: 120, damping: 15 }}
+        className="relative w-4 h-4 rounded-full flex items-center justify-center z-10"
       >
-        {/* Inner glow/reflection of the orb */}
+        {/* The Solar Corona (Light Mode only) */}
         <motion.div 
-          className="absolute inset-0 rounded-full"
-          animate={{
-            boxShadow: isDark ? "inset -2px -2px 4px rgba(0,0,0,0.3)" : "inset 2px 2px 4px rgba(255,255,255,0.5)",
-          }}
+          animate={{ opacity: isDark ? 0 : 1, scale: isDark ? 0 : [1, 1.4, 1] }}
+          transition={{ scale: { repeat: Infinity, duration: 3, ease: "easeInOut" } }}
+          className="absolute inset-[-4px] rounded-full bg-yellow-300/40 blur-[3px] -z-10"
         />
       </motion.div>
+
+      {/* The Eclipse Moon (Slides in to block the Star during transition to Dark Mode) */}
+      <motion.div
+        animate={{
+          x: isDark ? "0%" : "-150%",
+          y: isDark ? "0%" : "150%",
+          scale: isDark ? 1.5 : 1,
+        }}
+        transition={{ type: "spring", stiffness: 60, damping: 15 }}
+        className="absolute w-6 h-6 rounded-full bg-[#fafafa] dark:bg-[#050505] shadow-[inset_-2px_-2px_5px_rgba(255,255,255,0.05)] z-20 pointer-events-none"
+      />
+
+      {/* Star Dust Particles (Orbiting in dark mode) */}
+      {[...Array(2)].map((_, i) => (
+        <motion.div
+          key={i}
+          animate={{
+            rotate: isDark ? [0, 360] : 0,
+            opacity: isDark ? [0.2, 1, 0.2] : 0,
+          }}
+          transition={{
+            rotate: { repeat: Infinity, duration: 3 + i * 1.5, ease: "linear" },
+            opacity: { repeat: Infinity, duration: 1.5 + i, ease: "easeInOut" }
+          }}
+          className="absolute inset-0 z-30 pointer-events-none origin-center"
+        >
+          <div 
+            className="absolute w-0.5 h-0.5 bg-white rounded-full" 
+            style={{ 
+              top: `${15 + i * 20}%`, 
+              left: `${80 - i * 15}%`,
+              boxShadow: "0 0 3px 1px rgba(255,255,255,0.8)"
+            }} 
+          />
+        </motion.div>
+      ))}
     </motion.button>
   );
 }

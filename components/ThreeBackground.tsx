@@ -82,18 +82,17 @@ function SolidGlassGallery({ scrollY }: { scrollY: number }) {
     }
   });
 
-  // Reusable ultra-premium glass material (True UI Refraction)
+  // Reusable ultra-premium glass material (Optimized for 60fps Single-Pass Rendering)
   const glassMaterial = (
     <meshPhysicalMaterial 
       color="#050505"
-      metalness={0.9}
-      roughness={0.0} // Perfect smoothness for crystal clear refraction
+      metalness={1.0}
+      roughness={0.05} // Very slight roughness to catch light
       clearcoat={1.0}
-      clearcoatRoughness={0.0}
-      transmission={1.0} // 100% true transmission
-      ior={2.0} // Extremely high Index of Refraction for massive optical distortion
-      thickness={5.0} // Deep volume for the light to bend through
-      envMapIntensity={2.5} // Bright photorealistic reflections
+      clearcoatRoughness={0.1}
+      transparent={true}
+      opacity={0.4} // Transparent instead of transmissive (saves massive GPU)
+      envMapIntensity={4.0} // Ultra-bright reflections to fake refraction
     />
   );
 

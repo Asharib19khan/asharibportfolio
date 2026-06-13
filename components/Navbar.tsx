@@ -1,19 +1,18 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { motion, useScroll, useMotionValueEvent } from 'framer-motion';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-gsap.registerPlugin(ScrollTrigger);
-
+// Matching SphereLayout chunks:
+// c0=0, c1=1/6, c2=2/6, c3=3/6, c4=4/6, c5=5/6, c6=1
 const NAV_ITEMS = [
-  { id: 'home', label: 'Home' },
-  { id: 'skills', label: 'Skills' },
-  { id: 'projects', label: 'Projects' },
-  { id: 'education', label: 'Education' },
-  { id: 'achievements', label: 'Achievements' },
-  { id: 'contact', label: 'Contact' },
+  { id: 'home', label: 'Home', chunk: 0 },
+  { id: 'about', label: 'About', chunk: 1/6 },
+  { id: 'skills', label: 'Skills', chunk: 2/6 },
+  { id: 'projects', label: 'Projects', chunk: 3/6 },
+  { id: 'education', label: 'Education', chunk: 4/6 },
+  { id: 'achievements', label: 'Achievements', chunk: 5/6 },
+  { id: 'contact', label: 'Contact', chunk: 1 },
 ];
 
 export default function Navbar() {
@@ -21,7 +20,7 @@ export default function Navbar() {
   const [hidden, setHidden] = useState(false);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   
-  const { scrollY } = useScroll();
+  const { scrollY, scrollYProgress } = useScroll();
 
   // Smart Hide on Scroll Down
   useMotionValueEvent(scrollY, "change", (latest) => {
@@ -33,29 +32,32 @@ export default function Navbar() {
     }
   });
 
-  useEffect(() => {
-    // Setup ScrollTriggers for each section to detect active state
-    NAV_ITEMS.forEach(({ id }) => {
-      ScrollTrigger.create({
-        trigger: `#${id}`,
-        start: 'top 50%',
-        end: 'bottom 50%',
-        onToggle: (self) => {
-          if (self.isActive) setActiveId(id);
-        }
-      });
+  // Track active section based on scroll progress chunks
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    // Find the closest chunk
+    let closestId = 'home';
+    let minDiff = Infinity;
+    
+    NAV_ITEMS.forEach(item => {
+      const diff = Math.abs(latest - item.chunk);
+      if (diff < minDiff) {
+        minDiff = diff;
+        closestId = item.id;
+      }
     });
-  }, []);
+    
+    setActiveId(closestId);
+  });
 
-  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, chunk: number) => {
     e.preventDefault();
-    const el = document.getElementById(id);
-    if (el) {
-      window.scrollTo({
-        top: el.offsetTop,
-        behavior: 'smooth'
-      });
-    }
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const targetY = docHeight * chunk;
+    
+    window.scrollTo({
+      top: targetY,
+      behavior: 'smooth'
+    });
   };
 
   return (
@@ -69,7 +71,7 @@ export default function Navbar() {
       className="fixed top-6 left-1/2 -translate-x-1/2 z-50 pointer-events-auto"
     >
       <nav 
-        className="flex items-center gap-1 p-1.5 rounded-full bg-black/10 backdrop-blur-3xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-white/10 relative"
+        className="flex items-center gap-1 p-1.5 rounded-full bg-black/10 backdrop-blur-3xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-white/10 relative overflow-x-auto max-w-[90vw] no-scrollbar"
         onMouseLeave={() => setHoveredId(null)}
       >
         {NAV_ITEMS.map((item) => {
@@ -80,15 +82,14 @@ export default function Navbar() {
             <a
               key={item.id}
               href={`#${item.id}`}
-              onClick={(e) => handleClick(e, item.id)}
+              onClick={(e) => handleClick(e, item.chunk)}
               onMouseEnter={() => setHoveredId(item.id)}
-              className={`relative px-5 py-2.5 rounded-full text-xs font-heading tracking-[0.1em] uppercase transition-colors duration-300 z-10 ${
+              className={`relative px-4 md:px-5 py-2 md:py-2.5 rounded-full text-[10px] md:text-xs font-heading tracking-[0.1em] uppercase transition-colors duration-300 z-10 whitespace-nowrap ${
                 isActive ? 'text-white font-bold' : 'text-gray-400 hover:text-white'
               }`}
             >
               {item.label}
               
-              {/* Fluid Active Background (Minimalist Glow) */}
               {isActive && (
                 <motion.div 
                   layoutId="activeNavIndicator"
@@ -97,7 +98,6 @@ export default function Navbar() {
                 />
               )}
               
-              {/* Fluid Hover Background */}
               {isHovered && !isActive && (
                 <motion.div 
                   layoutId="hoverNavIndicator"

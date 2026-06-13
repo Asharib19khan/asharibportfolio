@@ -69,8 +69,9 @@ export default function SphereLayout({
   const contactY = useTransform(scrollYProgress, [c5, c6], ["100vh", "0vh"]);
   const contactOpacity = useTransform(scrollYProgress, [c5, c6], [0, 1]);
 
-  // Common wrapper class to center everything properly and fill screen
-  const wrapperClass = "absolute inset-0 w-full h-full flex justify-center items-center overflow-hidden";
+  // Common wrapper class to center everything properly and fill screen.
+  // CRITICAL PERF FIX: will-change-[transform,opacity] forces the browser to create a dedicated GPU layer, skipping DOM repaints completely.
+  const wrapperClass = "absolute inset-0 w-full h-full flex justify-center items-center overflow-hidden will-change-transform will-change-opacity";
 
   return (
     <div ref={containerRef} className="relative w-full h-[1400vh] bg-transparent">

@@ -29,7 +29,7 @@ export default function About() {
         variants={containerVariants}
         initial="hidden"
         animate={isInView ? "visible" : "hidden"}
-        className="mb-8 mt-16 px-8"
+        className="mb-8 mt-16 px-0 md:px-8"
       >
         <motion.h2 variants={itemVariants} className="text-[12px] font-heading tracking-[0.4em] text-gray-600 dark:text-gray-400 transition-colors duration-700 uppercase">
           About
@@ -40,15 +40,15 @@ export default function About() {
         variants={containerVariants}
         initial="hidden"
         animate={isInView ? "visible" : "hidden"}
-        className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8 items-start px-8 mb-16"
+        className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8 items-start px-0 md:px-8 mb-16"
       >
         <motion.div variants={itemVariants} className="lg:col-span-7">
-          <h3 className="text-4xl md:text-5xl lg:text-[72px] font-heading font-bold text-black dark:text-white transition-colors duration-700 leading-[1.0] tracking-tight">
+          <h3 className="text-3xl md:text-5xl lg:text-[72px] font-heading font-bold text-black dark:text-white transition-colors duration-700 leading-[1.0] tracking-tight">
             {ABOUT.statement}
           </h3>
         </motion.div>
 
-        <div className="lg:col-span-5 grid grid-cols-2 gap-x-8 gap-y-12">
+        <div className="lg:col-span-5 grid grid-cols-2 gap-x-4 md:gap-x-8 gap-y-8 md:gap-y-12">
           {ABOUT.stats.map((stat, i) => (
             <motion.div 
               variants={itemVariants}

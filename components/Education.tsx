@@ -41,10 +41,10 @@ export default function Education() {
               hidden: { opacity: 0, y: 100 },
               show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 60, damping: 20 } }
             }}
-            className="flex flex-col justify-between bg-black/5 dark:bg-white/5 transition-colors duration-700 backdrop-blur-xl border-[0.5px] border-black/10 dark:border-white/10 transition-colors duration-700 rounded-[24px] p-10 transition-colors duration-500 hover:border-theme-text hover:bg-black/5 dark:bg-white/5 transition-colors duration-700"
+            className="flex flex-col justify-between bg-black/5 dark:bg-white/5 transition-colors duration-700 backdrop-blur-xl border-[0.5px] border-black/10 dark:border-white/10 transition-colors duration-700 rounded-[24px] p-6 md:p-10 transition-colors duration-500 hover:border-theme-text hover:bg-black/5 dark:bg-white/5 transition-colors duration-700"
           >
             <div>
-              <h3 className="text-3xl font-heading font-bold text-black dark:text-white transition-colors duration-700 mb-2">
+              <h3 className="text-2xl md:text-3xl font-heading font-bold text-black dark:text-white transition-colors duration-700 mb-2">
                 {edu.institution}
               </h3>
               <p className="text-[12px] font-heading tracking-[0.3em] text-gray-600 dark:text-gray-400 transition-colors duration-700 uppercase mb-8">

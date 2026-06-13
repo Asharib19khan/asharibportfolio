@@ -48,7 +48,7 @@ export default function About() {
           </h3>
         </motion.div>
 
-        <div className="lg:col-span-5 grid grid-cols-2 gap-x-8 gap-y-12">
+        <div className="lg:col-span-5 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-12">
           {ABOUT.stats.map((stat, i) => (
             <motion.div 
               variants={itemVariants}
@@ -56,7 +56,7 @@ export default function About() {
               className="flex flex-col border-l border-black/10 dark:border-white/10 transition-colors duration-700 pl-6"
             >
               <span className="text-5xl md:text-7xl font-heading font-light text-black dark:text-white transition-colors duration-700 mb-2">{stat.value}</span>
-              <span className="text-[10px] font-body text-gray-600 dark:text-gray-400 transition-colors duration-700 uppercase tracking-[0.3em]">{stat.label}</span>
+              <span className="text-[10px] md:text-xs font-body text-gray-600 dark:text-gray-400 transition-colors duration-700 uppercase tracking-[0.3em]">{stat.label}</span>
             </motion.div>
           ))}
         </div>

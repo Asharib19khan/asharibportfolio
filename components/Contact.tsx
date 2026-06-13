@@ -38,7 +38,7 @@ export default function Contact() {
         viewport={{ once: true, margin: "-100px" }}
         className="flex flex-col items-center"
       >
-        <motion.h2 variants={itemVariants} className="text-[12vw] md:text-[80px] lg:text-[100px] font-heading font-black text-black dark:text-white transition-colors duration-700 leading-[0.9] tracking-tighter text-center uppercase mb-12">
+        <motion.h2 variants={itemVariants} className="text-5xl md:text-[80px] lg:text-[100px] font-heading font-black text-black dark:text-white transition-colors duration-700 leading-[0.9] tracking-tighter text-center uppercase mb-12">
           Let's Build<br />
           <span className="text-gray-600 dark:text-gray-400 transition-colors duration-700">Something.</span>
         </motion.h2>
@@ -46,7 +46,7 @@ export default function Contact() {
         <motion.a 
           variants={itemVariants}
           href={`mailto:${BRAND.email}`}
-          className="text-lg md:text-2xl font-heading text-black dark:text-white transition-colors duration-700 border-b border-black/10 dark:border-white/10 transition-colors duration-700 pb-2 mb-12 hover:text-gray-300 hover:border-gray-300 transition-colors tracking-wide"
+          className="text-base md:text-2xl font-heading text-black dark:text-white transition-colors duration-700 border-b border-black/10 dark:border-white/10 transition-colors duration-700 pb-2 mb-12 hover:text-gray-300 hover:border-gray-300 transition-colors tracking-wide break-all text-center px-4"
         >
           {BRAND.email}
         </motion.a>

@@ -29,7 +29,7 @@ export default function Hero() {
   return (
     <section id="home" className="relative w-full h-screen flex flex-col items-center justify-center px-6 z-10 overflow-hidden bg-white dark:bg-[#050505] transition-colors duration-700">
       {/* Dramatic Spotlight from the top left */}
-      <Spotlight className="-top-40 left-0 md:left-60 md:-top-20" size={150} />
+      <Spotlight className="-top-40 -left-10 md:left-60 md:-top-20" size={120} />
 
       <div className="flex w-full h-full max-w-[1400px] mx-auto items-center">
         {/* Left content: Massive Spline Robot */}
@@ -43,12 +43,12 @@ export default function Hero() {
         </div>
 
         {/* Right content: Hero Text */}
-        <div className="flex-1 p-8 relative z-10 flex flex-col justify-center items-start text-left">
+        <div className="flex-1 p-4 md:p-8 relative z-10 flex flex-col justify-center items-start text-left">
           <motion.h1
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.5, ease: "easeOut" }}
-            className="text-5xl md:text-[80px] font-heading font-black text-black dark:text-white transition-colors duration-700 leading-[0.9] uppercase mb-6 bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400"
+            className="text-4xl md:text-[80px] font-heading font-black text-black dark:text-white transition-colors duration-700 leading-[0.9] uppercase mb-6 bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400"
           >
             {BRAND.name}
           </motion.h1>

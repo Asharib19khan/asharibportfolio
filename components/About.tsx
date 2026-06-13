@@ -31,7 +31,7 @@ export default function About() {
         animate={isInView ? "visible" : "hidden"}
         className="mb-8 mt-16 px-8"
       >
-        <motion.h2 variants={itemVariants} className="text-[12px] font-heading tracking-[0.4em] text-gray-400 uppercase">
+        <motion.h2 variants={itemVariants} className="text-[12px] font-heading tracking-[0.4em] text-theme-muted uppercase">
           About
         </motion.h2>
       </motion.div>
@@ -43,7 +43,7 @@ export default function About() {
         className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8 items-start px-8 mb-16"
       >
         <motion.div variants={itemVariants} className="lg:col-span-7">
-          <h3 className="text-4xl md:text-5xl lg:text-[72px] font-heading font-bold text-white leading-[1.0] tracking-tight">
+          <h3 className="text-4xl md:text-5xl lg:text-[72px] font-heading font-bold text-theme-text leading-[1.0] tracking-tight">
             {ABOUT.statement}
           </h3>
         </motion.div>
@@ -53,10 +53,10 @@ export default function About() {
             <motion.div 
               variants={itemVariants}
               key={i} 
-              className="flex flex-col border-l border-white/20 pl-6"
+              className="flex flex-col border-l border-theme-border pl-6"
             >
-              <span className="text-5xl md:text-7xl font-heading font-light text-white mb-2">{stat.value}</span>
-              <span className="text-[10px] font-body text-gray-400 uppercase tracking-[0.3em]">{stat.label}</span>
+              <span className="text-5xl md:text-7xl font-heading font-light text-theme-text mb-2">{stat.value}</span>
+              <span className="text-[10px] font-body text-theme-muted uppercase tracking-[0.3em]">{stat.label}</span>
             </motion.div>
           ))}
         </div>

@@ -15,6 +15,7 @@ import Projects from '../components/Projects';
 import Education from '../components/Education';
 import Certifications from '../components/Certifications';
 import Contact from '../components/Contact';
+import ThemeToggle from '../components/ThemeToggle';
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
@@ -44,7 +45,8 @@ export default function Home() {
 
   return (
     <>
-      <main className="relative w-full bg-[#050505]">
+      <main className="relative w-full overflow-x-hidden bg-theme-bg transition-colors duration-500">
+        <ThemeToggle />
         <ThreeBackground />
         <BackgroundNoise />
         <Navbar />

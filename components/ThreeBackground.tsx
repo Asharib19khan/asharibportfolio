@@ -4,14 +4,16 @@ import { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Environment } from '@react-three/drei';
 import * as THREE from 'three';
+import { useTheme } from 'next-themes';
 
-function SolidGlassGallery({ scrollY }: { scrollY: number }) {
+function SolidGlassGallery({ scrollY, themeMode }: { scrollY: number, themeMode: string }) {
   const groupRef = useRef<THREE.Group>(null);
   const shape1Ref = useRef<THREE.Mesh>(null);
   const shape2Ref = useRef<THREE.Mesh>(null);
   const shape3Ref = useRef<THREE.Mesh>(null);
   const shape4Ref = useRef<THREE.Mesh>(null);
   const lightRef = useRef<THREE.PointLight>(null);
+  const materialRef = useRef<THREE.MeshPhysicalMaterial>(null);
 
   const mousePosition = useRef({ x: 0, y: 0 });
 
@@ -27,7 +29,7 @@ function SolidGlassGallery({ scrollY }: { scrollY: number }) {
     const docHeight = typeof document !== 'undefined' ? document.documentElement.scrollHeight : 4000;
     const winHeight = typeof window !== 'undefined' ? window.innerHeight : 1000;
     const maxScroll = Math.max(docHeight - winHeight, 1);
-    
+
     const scrollProgress = Math.min(Math.max(scrollY / maxScroll, 0), 1); // 0 to 1
 
     // Normalize mouse position to -1 to +1 range
@@ -38,13 +40,13 @@ function SolidGlassGallery({ scrollY }: { scrollY: number }) {
     // 1. Cinematic Zoom: Fly through the gallery of solid objects
     const targetZ = THREE.MathUtils.lerp(30, -50, scrollProgress);
     state.camera.position.z = THREE.MathUtils.damp(state.camera.position.z, targetZ, 4, delta);
-    
+
     // Smooth X/Y parallax based on global mouse
     const targetX = pointerX * 4;
     const targetY = pointerY * 4;
     state.camera.position.x = THREE.MathUtils.damp(state.camera.position.x, targetX, 4, delta);
     state.camera.position.y = THREE.MathUtils.damp(state.camera.position.y, targetY, 4, delta);
-    
+
     // Look straight ahead
     state.camera.lookAt(0, 0, state.camera.position.z - 20);
 
@@ -54,7 +56,7 @@ function SolidGlassGallery({ scrollY }: { scrollY: number }) {
       const ly = (pointerY * state.viewport.height) / 2;
       lightRef.current.position.set(lx, ly, state.camera.position.z - 5);
     }
-    
+
     // 3. Dynamic Shape Rotations (Solid Objects)
     if (shape1Ref.current) {
       shape1Ref.current.rotation.y += delta * 0.15;
@@ -80,11 +82,18 @@ function SolidGlassGallery({ scrollY }: { scrollY: number }) {
       groupRef.current.rotation.x = THREE.MathUtils.damp(groupRef.current.rotation.x, targetGroupRotX, 3, delta);
       groupRef.current.rotation.y = THREE.MathUtils.damp(groupRef.current.rotation.y, targetGroupRotY, 3, delta);
     }
+    
+    // 5. Dynamic Theme Material Morphing
+    if (materialRef.current) {
+      const targetColor = new THREE.Color(themeMode === 'light' ? '#ffffff' : '#050505');
+      materialRef.current.color.lerp(targetColor, 0.05);
+    }
   });
 
   // Reusable ultra-premium glass material (Optimized for 60fps Single-Pass Rendering)
   const glassMaterial = (
-    <meshPhysicalMaterial 
+    <meshPhysicalMaterial
+      ref={materialRef}
       color="#050505"
       metalness={1.0}
       roughness={0.05} // Very slight roughness to catch light
@@ -100,7 +109,7 @@ function SolidGlassGallery({ scrollY }: { scrollY: number }) {
     <group ref={groupRef}>
       {/* High-intensity cursor spotlight */}
       <pointLight ref={lightRef} color="#ffffff" intensity={300} distance={40} decay={1.5} />
-      
+
       {/* Very subtle blue ambient fill */}
       <ambientLight intensity={0.1} color="#4466ff" />
 
@@ -126,8 +135,10 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 
 export default function ThreeBackground() {
   const [scrollYValue, setScrollYValue] = useState(0);
+  const [isDesktop, setIsDesktop] = useState(true);
   const { scrollY } = useScroll();
-  
+  const { theme } = useTheme();
+
   // Crossfade: ThreeBackground starts completely invisible (0) and fades in as you scroll down
   const opacityFadeIn = useTransform(scrollY, [0, 400], [0, 0.95]);
   const scaleUp = useTransform(scrollY, [0, 400], [0.8, 1]);
@@ -142,16 +153,16 @@ export default function ThreeBackground() {
   }, []);
 
   return (
-    <motion.div 
+    <motion.div
       style={{ opacity: opacityFadeIn, scale: scaleUp }}
       className="fixed inset-0 pointer-events-none -z-10"
     >
-      <Canvas 
+      <Canvas
         camera={{ position: [0, 0, 30], fov: 45 }}
         dpr={[1, 1.5]}
         gl={{ antialias: false, alpha: true, powerPreference: "high-performance" }}
       >
-        <SolidGlassGallery scrollY={scrollYValue} />
+        <SolidGlassGallery scrollY={scrollYValue} themeMode={theme || 'dark'} />
         <Environment preset="city" />
       </Canvas>
     </motion.div>

@@ -71,7 +71,7 @@ export default function Navbar() {
       className="fixed top-6 left-1/2 -translate-x-1/2 z-50 pointer-events-auto"
     >
       <nav 
-        className="flex items-center gap-1 p-1.5 rounded-full bg-black/10 backdrop-blur-3xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-white/10 relative overflow-x-auto max-w-[90vw] no-scrollbar"
+        className="flex items-center gap-1 p-1.5 rounded-full bg-black/10 backdrop-blur-3xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-theme-border relative overflow-x-auto max-w-[90vw] no-scrollbar"
         onMouseLeave={() => setHoveredId(null)}
       >
         {NAV_ITEMS.map((item) => {
@@ -85,7 +85,7 @@ export default function Navbar() {
               onClick={(e) => handleClick(e, item.chunk)}
               onMouseEnter={() => setHoveredId(item.id)}
               className={`relative px-4 md:px-5 py-2 md:py-2.5 rounded-full text-[10px] md:text-xs font-heading tracking-[0.1em] uppercase transition-colors duration-300 z-10 whitespace-nowrap ${
-                isActive ? 'text-white font-bold' : 'text-gray-400 hover:text-white'
+                isActive ? 'text-theme-text font-bold' : 'text-theme-muted hover:text-theme-text'
               }`}
             >
               {item.label}
@@ -93,7 +93,7 @@ export default function Navbar() {
               {isActive && (
                 <motion.div 
                   layoutId="activeNavIndicator"
-                  className="absolute inset-0 bg-white/10 border border-white/20 rounded-full -z-10 shadow-[0_0_15px_rgba(255,255,255,0.05)]"
+                  className="absolute inset-0 bg-theme-glass border border-theme-border rounded-full -z-10 shadow-[0_0_15px_rgba(255,255,255,0.05)]"
                   transition={{ type: "spring" as const, bounce: 0.15, duration: 0.5 }}
                 />
               )}
@@ -101,7 +101,7 @@ export default function Navbar() {
               {isHovered && !isActive && (
                 <motion.div 
                   layoutId="hoverNavIndicator"
-                  className="absolute inset-0 bg-white/5 rounded-full -z-20"
+                  className="absolute inset-0 bg-theme-glass rounded-full -z-20"
                   transition={{ type: "spring" as const, bounce: 0.15, duration: 0.4 }}
                 />
               )}

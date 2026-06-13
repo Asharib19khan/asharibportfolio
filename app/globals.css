@@ -3,24 +3,45 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --bg-primary: #FAFAFA;
+    --text-primary: #0A0A0A;
+    --text-secondary: #666666;
+    --border-color: rgba(0, 0, 0, 0.1);
+    --glass-bg: rgba(255, 255, 255, 0.5);
+    --selection-bg: #0066FF;
+    --selection-text: #FFFFFF;
+  }
+
+  .dark {
+    --bg-primary: #050505;
+    --text-primary: #FFFFFF;
+    --text-secondary: #9CA3AF;
+    --border-color: rgba(255, 255, 255, 0.1);
+    --glass-bg: rgba(0, 0, 0, 0.5);
+    --selection-bg: #0066FF;
+    --selection-text: #050505;
+  }
+
   * {
     box-sizing: border-box;
   }
 
   body {
-    background-color: theme('colors.void');
-    color: theme('colors.ice');
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
     overflow-x: hidden;
     font-family: theme('fontFamily.body');
     margin: 0;
     padding: 0;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.5s ease, color 0.5s ease;
   }
 
   ::selection {
-    background-color: theme('colors.ember');
-    color: theme('colors.void');
+    background-color: var(--selection-bg);
+    color: var(--selection-text);
   }
 
   h1, h2, h3, h4, h5, h6 {

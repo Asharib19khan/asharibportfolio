@@ -44,7 +44,7 @@ export default function Home() {
 
   return (
     <>
-      <main className="relative w-full bg-[#050505]">
+      <main className="relative w-full overflow-x-hidden bg-[#050505]">
         <ThreeBackground />
         <BackgroundNoise />
         <Navbar />

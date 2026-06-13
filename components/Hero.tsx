@@ -1,13 +1,22 @@
 "use client";
 
-import { useRef, useEffect } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { BRAND } from '../constants/content';
 import MagneticButton from './MagneticButton';
 import { SplineScene } from "@/components/ui/splite";
 import { Spotlight } from "@/components/ui/spotlight";
 
 export default function Hero() {
+  const [isDesktop, setIsDesktop] = useState(true);
+
+  useEffect(() => {
+    const checkSize = () => setIsDesktop(window.innerWidth >= 768);
+    checkSize();
+    window.addEventListener('resize', checkSize);
+    return () => window.removeEventListener('resize', checkSize);
+  }, []);
+
   return (
     <section id="home" className="relative w-full h-screen flex flex-col items-center justify-center px-6 z-10 overflow-hidden bg-[#050505]">
       {/* Dramatic Spotlight from the top left */}
@@ -16,10 +25,12 @@ export default function Hero() {
       <div className="flex w-full h-full max-w-[1400px] mx-auto items-center">
         {/* Left content: Massive Spline Robot */}
         <div className="flex-1 relative h-full w-full hidden md:block">
-          <SplineScene
-            scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
-            className="w-full h-full absolute scale-[1.15] origin-center translate-y-12 -left-10"
-          />
+          {isDesktop && (
+            <SplineScene
+              scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+              className="w-full h-full absolute scale-[1.15] origin-center translate-y-12 -left-10"
+            />
+          )}
         </div>
 
         {/* Right content: Hero Text */}

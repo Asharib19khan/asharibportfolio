@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
 interface SphereLayoutProps {
@@ -17,12 +17,37 @@ export default function SphereLayout({
   hero, about, skills, projects, education, certifications, contact
 }: SphereLayoutProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    handleResize(); // Initial check
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"]
   });
 
   const c0 = 0, c1 = 1/6, c2 = 2/6, c3 = 3/6, c4 = 4/6, c5 = 5/6, c6 = 1;
+
+  if (isMobile) {
+    return (
+      <div className="w-full flex flex-col items-center overflow-x-hidden pt-20">
+        {hero}
+        {about}
+        {skills}
+        {projects}
+        {education}
+        {certifications}
+        {contact}
+      </div>
+    );
+  }
 
   // Optimize Performance: Use visibility instead of display to prevent massive DOM layout reflows (hanging)
   const heroVis = useTransform(scrollYProgress, v => v <= c1 + 0.05 ? "visible" : "hidden");

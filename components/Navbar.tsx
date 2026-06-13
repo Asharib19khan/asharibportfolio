@@ -72,8 +72,7 @@ export default function Navbar() {
       className="fixed top-6 left-1/2 -translate-x-1/2 z-50 pointer-events-auto"
     >
       <nav 
-        className="flex items-center gap-1 p-1.5 rounded-full bg-white/40 dark:bg-black/20 backdrop-blur-3xl shadow-[0_8px_32px_rgba(0,0,0,0.05)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.5)] border border-black/5 dark:border-white/10 relative overflow-x-auto max-w-[90vw] md:max-w-none no-scrollbar transition-colors duration-700"
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        className="flex items-center gap-1 p-1.5 rounded-full bg-white/40 dark:bg-black/20 backdrop-blur-3xl shadow-[0_8px_32px_rgba(0,0,0,0.05)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.5)] border border-black/5 dark:border-white/10 relative overflow-x-auto max-w-[90vw] no-scrollbar transition-colors duration-700 snap-x snap-mandatory"
         onMouseLeave={() => setHoveredId(null)}
       >
         {NAV_ITEMS.map((item) => {
@@ -86,7 +85,7 @@ export default function Navbar() {
               href={`#${item.id}`}
               onClick={(e) => handleClick(e, item.chunk)}
               onMouseEnter={() => setHoveredId(item.id)}
-              className={`relative px-5 md:px-6 py-2.5 md:py-3 rounded-full text-xs md:text-sm font-heading tracking-[0.1em] uppercase transition-colors duration-300 z-10 whitespace-nowrap ${
+              className={`snap-center relative px-4 md:px-5 py-2 md:py-2.5 rounded-full text-[10px] md:text-xs font-heading tracking-[0.1em] uppercase transition-colors duration-300 z-10 whitespace-nowrap ${
                 isActive ? 'text-black dark:text-white font-bold' : 'text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white'
               }`}
             >

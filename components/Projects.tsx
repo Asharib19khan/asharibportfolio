@@ -22,8 +22,8 @@ const ExternalLinkIcon = ({ className }: { className?: string }) => (
 
 function ProjectCard({ proj }: { proj: any }) {
   return (
-    <TiltCard className="project-card h-full min-h-[350px] md:min-h-[400px]">
-      <div className="p-6 md:p-10 flex flex-col h-full justify-between">
+    <TiltCard className="project-card h-full min-h-[400px]">
+      <div className="p-10 flex flex-col h-full justify-between">
         <div>
           <h3 className="text-3xl md:text-[40px] font-heading font-bold text-black dark:text-white transition-colors duration-700 mb-6 leading-[1.1] tracking-tight hover:text-black dark:text-white transition-colors duration-700 transition-colors">
             <ScrambleText text={proj.title} />

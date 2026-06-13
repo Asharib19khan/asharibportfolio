@@ -34,7 +34,7 @@ export default function Skills() {
             <div className="flex flex-wrap gap-3">
               {cat.items.map((skill: string, idx: number) => (
                 <motion.span 
-                  variants={{ hidden: { opacity: 0, scale: 0.8 }, show: { opacity: 1, scale: 1, transition: { type: "spring" } } }}
+                  variants={{ hidden: { opacity: 0, scale: 0.8 }, show: { opacity: 1, scale: 1, transition: { type: "spring" as const } } }}
                   key={idx} 
                   className="px-5 py-2 border border-white/10 rounded-full text-xs font-body text-gray-300 bg-white/5 hover:border-white hover:text-white transition-colors duration-300 cursor-default"
                 >

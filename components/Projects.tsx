@@ -87,7 +87,7 @@ export default function Projects() {
             key={index} 
             variants={{
               hidden: { y: "100%", opacity: 0 },
-              visible: { y: "0%", opacity: 1, transition: { type: "spring", damping: 15 } }
+              visible: { y: "0%", opacity: 1, transition: { type: "spring" as const, damping: 15 } }
             }}
             className="inline-block"
           >
@@ -110,7 +110,7 @@ export default function Projects() {
         {PROJECTS.map((proj, i) => (
           <motion.div key={i} variants={{
             hidden: { opacity: 0, scale: 0.8, y: 100 },
-            show: { opacity: 1, scale: 1, y: 0, transition: { type: "spring", stiffness: 60, damping: 20 } }
+            show: { opacity: 1, scale: 1, y: 0, transition: { type: "spring" as const, stiffness: 60, damping: 20 } }
           }} className="h-full">
             <ProjectCard proj={proj} />
           </motion.div>

@@ -93,7 +93,7 @@ export default function Navbar() {
                 <motion.div 
                   layoutId="activeNavIndicator"
                   className="absolute inset-0 bg-white/10 border border-white/20 rounded-full -z-10 shadow-[0_0_15px_rgba(255,255,255,0.05)]"
-                  transition={{ type: "spring", bounce: 0.15, duration: 0.5 }}
+                  transition={{ type: "spring" as const, bounce: 0.15, duration: 0.5 }}
                 />
               )}
               
@@ -102,7 +102,7 @@ export default function Navbar() {
                 <motion.div 
                   layoutId="hoverNavIndicator"
                   className="absolute inset-0 bg-white/5 rounded-full -z-20"
-                  transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
+                  transition={{ type: "spring" as const, bounce: 0.15, duration: 0.4 }}
                 />
               )}
             </a>

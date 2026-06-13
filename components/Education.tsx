@@ -39,7 +39,7 @@ export default function Education() {
             key={i}
             variants={{
               hidden: { opacity: 0, y: 100 },
-              show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 60, damping: 20 } }
+              show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 60, damping: 20 } }
             }}
             className="flex flex-col justify-between bg-white/5 backdrop-blur-xl border-[0.5px] border-white/10 rounded-[24px] p-10 transition-colors duration-500 hover:border-white/30 hover:bg-white/10"
           >

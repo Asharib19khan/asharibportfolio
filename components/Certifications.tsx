@@ -31,7 +31,7 @@ export default function Certifications() {
             key={i}
             variants={{
               hidden: { opacity: 0, scale: 0.95 },
-              show: { opacity: 1, scale: 1, transition: { type: "spring" } }
+              show: { opacity: 1, scale: 1, transition: { type: "spring" as const } }
             }}
             className="flex flex-col justify-center bg-white/5 border-[0.5px] border-white/10 rounded-[16px] p-6 transition-colors duration-300 hover:border-white/30 hover:bg-white/10"
           >

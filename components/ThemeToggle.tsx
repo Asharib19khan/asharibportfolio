@@ -1,132 +1,106 @@
 "use client";
 
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useState, useRef } from "react";
+import { motion, useAnimation, useMotionValue, useTransform } from "framer-motion";
 
 export default function ThemeToggle() {
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
+  
+  // Physics & Drag state
+  const constraintsRef = useRef<HTMLDivElement>(null);
+  const controls = useAnimation();
+  const x = useMotionValue(0);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
   if (!mounted) {
-    return <div className="w-10 h-10 rounded-full" />;
+    return <div className="w-[100px] h-8 rounded-full bg-black/5 dark:bg-white/10" />;
   }
 
   const isDark = theme === "dark";
 
+  // Map the drag distance to dynamic visual effects
+  const pullTextOpacity = useTransform(x, [0, 40], [1, 0]);
+  const iconRotate = useTransform(x, [0, 60], [0, 180]);
+  const backgroundWidth = useTransform(x, [0, 60], ["32px", "100%"]);
+
+  const handleDragEnd = (event: any, info: any) => {
+    const threshold = 40; // If pulled more than 40px, trigger toggle
+    if (info.offset.x > threshold) {
+      // Trigger toggle!
+      setTheme(isDark ? "light" : "dark");
+      
+      // Flash effect before snapping back
+      controls.start({
+        x: 0,
+        scale: [1, 1.2, 1],
+        transition: { type: "spring", stiffness: 400, damping: 15 }
+      });
+    } else {
+      // Snap back if not pulled far enough
+      controls.start({ x: 0, transition: { type: "spring", stiffness: 500, damping: 25 } });
+    }
+  };
+
   return (
-    <motion.button
-      onClick={() => setTheme(isDark ? "light" : "dark")}
-      className="relative flex items-center justify-center w-10 h-10 rounded-full bg-black/5 dark:bg-white/10 border border-black/10 dark:border-white/10 text-gray-800 dark:text-gray-100 hover:bg-black/10 dark:hover:bg-white/20 transition-colors overflow-hidden group"
-      whileTap={{ scale: 0.9 }}
-      whileHover={{ scale: 1.05 }}
-      aria-label="Toggle Dark Mode"
+    <div 
+      ref={constraintsRef}
+      className="relative flex items-center w-[100px] h-8 rounded-full bg-black/5 dark:bg-white/10 border border-black/10 dark:border-white/10 overflow-hidden shadow-inner group"
+      title="Drag to switch theme"
     >
-      {/* Background ambient glow on hover */}
+      {/* Dynamic fill background that stretches as you pull */}
       <motion.div 
-        className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-        style={{
-          background: isDark 
-            ? "radial-gradient(circle at 50% 50%, rgba(255,255,255,0.1), transparent 70%)"
-            : "radial-gradient(circle at 50% 50%, rgba(0,0,0,0.05), transparent 70%)"
-        }}
+        style={{ width: backgroundWidth }}
+        className="absolute left-0 top-0 bottom-0 bg-black/10 dark:bg-white/20 origin-left"
       />
 
-      <motion.svg
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        initial={false}
-        animate={{
-          rotate: isDark ? 90 : 0,
-        }}
-        transition={{ type: "spring", stiffness: 150, damping: 15, mass: 1 }}
-        style={{ originX: "50%", originY: "50%" }}
+      {/* "PULL" Label that fades out as you drag */}
+      <motion.div 
+        style={{ opacity: pullTextOpacity }}
+        className="absolute inset-0 flex items-center justify-end pr-4 pointer-events-none"
       >
-        <mask id="moon-mask">
-          <rect x="0" y="0" width="24" height="24" fill="white" />
-          <motion.circle
-            initial={false}
-            animate={{
-              cx: isDark ? 8 : 25,
-              cy: isDark ? 8 : -5,
-              r: 8
-            }}
-            transition={{ type: "spring", stiffness: 200, damping: 20, mass: 1.2 }}
-            fill="black"
-          />
-        </mask>
+        <span className="text-[9px] font-heading font-bold tracking-[0.2em] text-gray-500 dark:text-gray-400 select-none">
+          PULL
+        </span>
+      </motion.div>
 
-        {/* Central Core (Sun / Moon) */}
-        <motion.circle
-          cx="12"
-          cy="12"
-          mask="url(#moon-mask)"
-          fill="currentColor"
-          initial={false}
-          animate={{
-            r: isDark ? 9 : 5,
-          }}
-          transition={{ type: "spring", stiffness: 200, damping: 20, mass: 1 }}
-        />
-
-        {/* Sun Rays */}
-        <motion.g
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          initial={false}
-          animate={{
-            opacity: isDark ? 0 : 1,
-            scale: isDark ? 0.2 : 1,
-          }}
-          transition={{ type: "spring", stiffness: 150, damping: 20, mass: 1 }}
-          style={{ originX: "50%", originY: "50%" }}
-        >
-          <line x1="12" y1="1" x2="12" y2="3" />
-          <line x1="12" y1="21" x2="12" y2="23" />
-          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-          <line x1="1" y1="12" x2="3" y2="12" />
-          <line x1="21" y1="12" x2="23" y2="12" />
-          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-        </motion.g>
-
-        {/* Night Stars */}
-        <motion.g
-          fill="currentColor"
-          initial={false}
-          animate={{
-            opacity: isDark ? 1 : 0,
-            scale: isDark ? 1 : 0,
-          }}
-          transition={{ type: "spring", stiffness: 150, damping: 15, mass: 1, delay: isDark ? 0.1 : 0 }}
-          style={{ originX: "50%", originY: "50%" }}
-        >
-          <motion.circle 
-            cx="19" cy="5" r="1.5" 
-            animate={{ scale: isDark ? [1, 1.3, 1] : 1, opacity: isDark ? [1, 0.7, 1] : 0 }} 
-            transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-          />
-          <motion.circle 
-            cx="20" cy="11" r="1" 
-            animate={{ scale: isDark ? [1, 1.5, 1] : 1, opacity: isDark ? [1, 0.5, 1] : 0 }} 
-            transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut", delay: 0.5 }}
-          />
-          <motion.circle 
-            cx="16" cy="18" r="1" 
-            animate={{ scale: isDark ? [1, 1.4, 1] : 1, opacity: isDark ? [1, 0.6, 1] : 0 }} 
-            transition={{ repeat: Infinity, duration: 1.8, ease: "easeInOut", delay: 1 }}
-          />
-        </motion.g>
-      </motion.svg>
-    </motion.button>
+      {/* The Draggable Thumb */}
+      <motion.div
+        drag="x"
+        dragConstraints={constraintsRef}
+        dragElastic={0.2}
+        dragMomentum={false}
+        onDragEnd={handleDragEnd}
+        animate={controls}
+        style={{ x }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ cursor: "grabbing" }}
+        className="relative z-10 flex items-center justify-center w-8 h-8 rounded-full bg-white dark:bg-[#1a1a1a] shadow-md border border-black/5 dark:border-white/20 cursor-grab"
+      >
+        <motion.div style={{ rotate: iconRotate }}>
+          {isDark ? (
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-white">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+          ) : (
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-black">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+          )}
+        </motion.div>
+      </motion.div>
+    </div>
   );
 }

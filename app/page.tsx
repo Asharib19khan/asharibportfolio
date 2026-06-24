@@ -3,27 +3,25 @@
 import { useState, useEffect } from 'react';
 import Lenis from 'lenis';
 
-
-import Navbar from '../components/Navbar';
-import BackgroundNoise from '../components/BackgroundNoise';
-import ThreeBackground from '../components/ThreeBackground';
-import SphereLayout from '../components/SphereLayout';
-import Hero from '../components/Hero';
-import About from '../components/About';
-import Skills from '../components/Skills';
-import Projects from '../components/Projects';
-import Education from '../components/Education';
-import Certifications from '../components/Certifications';
-import Contact from '../components/Contact';
+import Navbar from '../components/layout/Navbar';
+import BackgroundNoise from '../components/layout/BackgroundNoise';
+import SphereLayout from '../components/layout/SphereLayout';
+import Hero from '../components/sections/Hero';
+import Skills from '../components/sections/Skills';
+import Projects from '../components/sections/Projects';
+import Certifications from '../components/sections/Certifications';
+import Contact from '../components/sections/Contact';
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
+
     const lenis = new Lenis({
-      lerp: 0.1,
+      lerp: 0.04, // Extremely smooth, cinematic lerp
       smoothWheel: true,
+      wheelMultiplier: 1.2, // Slightly more responsive wheel
     });
 
     let rafId: number;
@@ -45,16 +43,12 @@ export default function Home() {
   return (
     <>
       <main className="relative w-full bg-gray-50 dark:bg-[#050505] transition-colors duration-700">
-        <ThreeBackground />
-        <BackgroundNoise />
         <Navbar />
         
         <SphereLayout 
           hero={<Hero />}
-          about={<About />}
           skills={<Skills />}
           projects={<Projects />}
-          education={<Education />}
           certifications={<Certifications />}
           contact={<Contact />}
         />

@@ -5,6 +5,9 @@ import { BRAND } from "../constants/content";
 export const metadata: Metadata = {
   title: `${BRAND.name} — ${BRAND.alias}`,
   description: BRAND.role,
+  keywords: ["Asharib Khan", "Software Engineer", "AI Engineer", "Full Stack Developer", "Next.js", "React", "Portfolio", "CTO", "YEEZUS"],
+  authors: [{ name: BRAND.name }],
+  robots: "index, follow",
   openGraph: {
     title: `${BRAND.name} — ${BRAND.alias}`,
     description: BRAND.role,
@@ -18,7 +21,7 @@ export const metadata: Metadata = {
   }
 };
 
-import { ThemeProvider } from "../components/ThemeProvider";
+import { ThemeProvider } from "../components/providers/ThemeProvider";
 
 export default function RootLayout({
   children,

@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import { BRAND } from '../../constants/content';
 import MagneticButton from '../ui/MagneticButton';
-import { ArrowUpRight, Github, Linkedin } from '../ui/icons';
+import { ArrowUpRight, Github, Instagram, Linkedin } from '../ui/icons';
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -66,7 +66,38 @@ export default function Contact({ cinematic }: { cinematic: boolean }) {
           >
             <Github className="w-8 h-8" />
           </a>
+          <a
+            href={BRAND.instagram}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-dim hover:text-ink transition-colors duration-300"
+            aria-label="Instagram"
+          >
+            <Instagram className="w-8 h-8" />
+          </a>
         </motion.div>
+
+        <motion.p variants={itemVariants} className="mt-14 text-[11px] text-dim/80 text-center max-w-md">
+          Hero head scan:{' '}
+          <a
+            href="https://www.ir-ltd.net/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-2 hover:text-ink transition-colors"
+          >
+            &ldquo;Infinite&rdquo; by Lee Perry-Smith
+          </a>
+          , licensed{' '}
+          <a
+            href="https://creativecommons.org/licenses/by/3.0/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-2 hover:text-ink transition-colors"
+          >
+            CC BY 3.0
+          </a>
+          . Android shell and skin effect are original.
+        </motion.p>
       </motion.div>
     </section>
   );

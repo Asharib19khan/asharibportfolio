@@ -75,6 +75,15 @@
   }
 }
 
+@layer utilities {
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 /* Lenis Scroll Overrides */
 html.lenis, html.lenis body {
   height: auto;

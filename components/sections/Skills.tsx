@@ -8,11 +8,13 @@ const WIDE_TILES = new Set([0, 6]);
 
 export default function Skills({ cinematic }: { cinematic: boolean }) {
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    for (const card of e.currentTarget.querySelectorAll<HTMLElement>("[data-spotlight]")) {
-      const rect = card.getBoundingClientRect();
-      card.style.setProperty("--mouse-x", `${e.clientX - rect.left}px`);
-      card.style.setProperty("--mouse-y", `${e.clientY - rect.top}px`);
-    }
+    // Read every rect first, then write: interleaving forced a layout per card on each move.
+    const cards = Array.from(e.currentTarget.querySelectorAll<HTMLElement>("[data-spotlight]"));
+    const rects = cards.map((card) => card.getBoundingClientRect());
+    cards.forEach((card, i) => {
+      card.style.setProperty("--mouse-x", `${e.clientX - rects[i].left}px`);
+      card.style.setProperty("--mouse-y", `${e.clientY - rects[i].top}px`);
+    });
   };
 
   const handleMouseMoveCard = (e: React.MouseEvent<HTMLDivElement>) => {

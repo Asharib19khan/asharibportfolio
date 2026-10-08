@@ -124,5 +124,12 @@ export default function Particles() {
     };
   }, [onScreen, rgb]);
 
-  return <canvas ref={canvasRef} aria-hidden="true" className="absolute inset-0 pointer-events-none z-0 opacity-60" />;
+  // Fainter on paper: dark streaks on a light page read as dust rather than stars.
+  return (
+    <canvas
+      ref={canvasRef}
+      aria-hidden="true"
+      className={`absolute inset-0 pointer-events-none z-0 ${resolvedTheme === 'light' ? 'opacity-30' : 'opacity-60'}`}
+    />
+  );
 }

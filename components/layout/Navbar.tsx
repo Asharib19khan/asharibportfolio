@@ -59,7 +59,7 @@ export default function Navbar({ cinematic }: { cinematic: boolean }) {
     >
       <nav
         aria-label="Sections"
-        className="flex items-center gap-0.5 md:gap-1 p-1.5 rounded-full bg-paper/80 backdrop-blur-md shadow-[0_8px_30px_-12px_rgb(var(--ink)/0.25)] border border-line/10 relative"
+        className="flex items-center gap-0.5 md:gap-1 p-1.5 rounded-full bg-paper/80 backdrop-blur-md shadow-[0_8px_30px_-12px_rgb(var(--ink)/0.25)] border border-line/10 relative max-w-full overflow-x-auto no-scrollbar"
         onMouseLeave={() => setHoveredId(null)}
       >
         {SECTIONS.map((item) => {
@@ -76,7 +76,7 @@ export default function Navbar({ cinematic }: { cinematic: boolean }) {
                 scrollToSection(item.id);
               }}
               onMouseEnter={() => setHoveredId(item.id)}
-              className={`relative px-2.5 sm:px-4 md:px-5 py-2 md:py-2.5 rounded-full text-[10px] md:text-xs font-heading tracking-[0.06em] sm:tracking-[0.1em] uppercase transition-colors duration-300 z-10 whitespace-nowrap ${
+              className={`relative px-2 sm:px-4 md:px-5 py-2 md:py-2.5 rounded-full text-[10px] md:text-xs font-heading tracking-[0.04em] sm:tracking-[0.1em] uppercase transition-colors duration-300 z-10 whitespace-nowrap ${
                 isActive ? 'text-ink font-bold' : 'text-dim hover:text-ink'
               }`}
             >
@@ -101,7 +101,7 @@ export default function Navbar({ cinematic }: { cinematic: boolean }) {
           );
         })}
 
-        <div className="w-px h-6 bg-line/10 mx-1" />
+        <div className="w-px h-6 bg-line/10 mx-0.5 sm:mx-1 shrink-0" />
         <ThemeToggle />
       </nav>
     </motion.header>

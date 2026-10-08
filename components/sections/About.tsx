@@ -1,66 +1,65 @@
 "use client";
 
-import { useRef } from 'react';
-import { motion, useInView, Variants } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { ABOUT } from '../../constants/content';
 
-export default function About() {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+const ease = [0.16, 1, 0.3, 1] as const;
 
-  const containerVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.15, delayChildren: 0.1 }
-    }
-  };
-
-  const itemVariants: Variants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 50, damping: 20 } }
-  };
-
+export default function About({ cinematic }: { cinematic: boolean }) {
   return (
-    <section ref={ref} id="about" className="relative z-10 w-full min-h-[80vh] flex flex-col justify-center px-6 md:px-12 py-32 max-w-[1400px] mx-auto">
-      <div className="absolute inset-0 bg-transparent -z-10"></div>
-      
-      <motion.div 
-        variants={containerVariants}
-        initial="hidden"
-        animate={isInView ? "visible" : "hidden"}
-        className="mb-8 mt-16 px-8"
-      >
-        <motion.h2 variants={itemVariants} className="text-[12px] font-heading tracking-[0.4em] text-gray-600 dark:text-gray-400 transition-colors duration-700 uppercase">
-          About
-        </motion.h2>
-      </motion.div>
-
-      <motion.div 
-        variants={containerVariants}
-        initial="hidden"
-        animate={isInView ? "visible" : "hidden"}
-        className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8 items-start px-8 mb-16"
-      >
-        <motion.div variants={itemVariants} className="lg:col-span-7">
-          <h3 className="text-4xl md:text-5xl lg:text-[72px] font-heading font-bold text-black dark:text-white transition-colors duration-700 leading-[1.0] tracking-tight">
-            {ABOUT.statement}
-          </h3>
-        </motion.div>
-
-        <div className="lg:col-span-5 grid grid-cols-2 gap-x-8 gap-y-12">
-          {ABOUT.stats.map((stat, i) => (
-            <motion.div 
-              variants={itemVariants}
-              key={i} 
-              className="flex flex-col border-l border-black/10 dark:border-white/10 transition-colors duration-700 pl-6"
-            >
-              <span className="text-5xl md:text-7xl font-heading font-light text-black dark:text-white transition-colors duration-700 mb-2">{stat.value}</span>
-              <span className="text-[10px] font-body text-gray-600 dark:text-gray-400 transition-colors duration-700 uppercase tracking-[0.3em]">{stat.label}</span>
-            </motion.div>
-          ))}
+    <section
+      id="about"
+      aria-labelledby="about-title"
+      className={`relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 flex flex-col justify-center ${
+        cinematic ? 'h-screen pt-24 pb-12' : 'py-24 border-t border-line/10'
+      }`}
+    >
+      {cinematic && (
+        <div aria-hidden="true" className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0 overflow-hidden">
+          <span className="text-[15vw] font-heading font-bold uppercase tracking-widest text-ink/[0.04]">
+            About
+          </span>
         </div>
-      </motion.div>
+      )}
+
+      <div className="relative z-10 grid gap-10 lg:grid-cols-12 lg:gap-16 lg:items-center">
+        <motion.h2
+          id="about-title"
+          initial={{ opacity: 0, y: 32 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.9, ease }}
+          className="lg:col-span-7 font-heading font-bold text-ink text-[clamp(2.25rem,5.2vw,4.75rem)] leading-[1.02] tracking-[-0.02em]"
+        >
+          {ABOUT.statement.lead}
+          <span className="text-accent">{ABOUT.statement.accent}</span>
+        </motion.h2>
+
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.9, delay: 0.12, ease }}
+          className="lg:col-span-5 flex flex-col gap-8"
+        >
+          <div className="flex flex-col gap-4 text-[0.95rem] md:text-base text-dim leading-relaxed max-w-[60ch]">
+            {ABOUT.paragraphs.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </div>
+
+          <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5 border-t border-line/10 pt-6">
+            {ABOUT.facts.map((fact) => (
+              <div key={fact.label}>
+                <dt className="font-heading font-bold uppercase tracking-[0.18em] text-[10px] text-dim mb-1.5">
+                  {fact.label}
+                </dt>
+                <dd className="text-sm md:text-[0.95rem] text-ink leading-snug">{fact.value}</dd>
+              </div>
+            ))}
+          </dl>
+        </motion.div>
+      </div>
     </section>
   );
 }

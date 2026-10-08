@@ -1,17 +1,34 @@
 "use client";
 
-import { useRef, useEffect } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { useRef, useEffect, useState } from 'react';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useTheme } from 'next-themes';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useMotionValueEvent, useScroll, useTransform } from 'framer-motion';
+
+// Page metrics, refreshed on resize instead of read every frame: reading scrollHeight inside
+// the render loop forces a synchronous layout on every frame.
+const metrics = { maxScroll: 1, width: 1, height: 1 };
+function measure() {
+  metrics.maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+  metrics.width = window.innerWidth;
+  metrics.height = window.innerHeight;
+}
+
+/** Compiles the scene's shaders up front, so waking the loop later never stalls a scroll. */
+function Precompile() {
+  const { gl, scene, camera } = useThree();
+  useEffect(() => {
+    gl.compileAsync(scene, camera).catch(() => undefined);
+  }, [gl, scene, camera]);
+  return null;
+}
 
 function SolidGlassGallery() {
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme !== 'light';
 
   const groupRef = useRef<THREE.Group>(null);
-  const shape1Ref = useRef<THREE.Mesh>(null);
   const shape2Ref = useRef<THREE.Mesh>(null);
   const shape3Ref = useRef<THREE.Mesh>(null);
   const shape4Ref = useRef<THREE.Mesh>(null);
@@ -23,32 +40,28 @@ function SolidGlassGallery() {
     const updateMousePosition = (e: MouseEvent) => {
       mousePosition.current = { x: e.clientX, y: e.clientY };
     };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(document.documentElement);
     window.addEventListener('mousemove', updateMousePosition, { passive: true });
-    return () => window.removeEventListener('mousemove', updateMousePosition);
+    window.addEventListener('resize', measure);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('mousemove', updateMousePosition);
+      window.removeEventListener('resize', measure);
+    };
   }, []);
 
   useFrame((state, delta) => {
-    // Read scroll directly in the WebGL loop to avoid React re-renders (Fixes massive hanging)
-    const currentScrollY = window.scrollY || 0;
-    
-    const docHeight = typeof document !== 'undefined' ? document.documentElement.scrollHeight : 4000;
-    const winHeight = typeof window !== 'undefined' ? window.innerHeight : 1000;
-    const maxScroll = Math.max(docHeight - winHeight, 1);
-
-    const scrollProgress = Math.min(Math.max(currentScrollY / maxScroll, 0), 1);
-
-    const winWidth = typeof window !== 'undefined' ? window.innerWidth : 1000;
-    const pointerX = (mousePosition.current.x / winWidth) * 2 - 1 || 0;
-    const pointerY = -(mousePosition.current.y / winHeight) * 2 + 1 || 0;
+    // Read scroll directly in the WebGL loop to avoid React re-renders.
+    const scrollProgress = Math.min(Math.max((window.scrollY || 0) / metrics.maxScroll, 0), 1);
+    const pointerX = (mousePosition.current.x / metrics.width) * 2 - 1 || 0;
+    const pointerY = -(mousePosition.current.y / metrics.height) * 2 + 1 || 0;
 
     const targetZ = THREE.MathUtils.lerp(30, -50, scrollProgress);
     state.camera.position.z = THREE.MathUtils.damp(state.camera.position.z, targetZ, 4, delta);
-
-    const targetX = pointerX * 4;
-    const targetY = pointerY * 4;
-    state.camera.position.x = THREE.MathUtils.damp(state.camera.position.x, targetX, 4, delta);
-    state.camera.position.y = THREE.MathUtils.damp(state.camera.position.y, targetY, 4, delta);
-
+    state.camera.position.x = THREE.MathUtils.damp(state.camera.position.x, pointerX * 4, 4, delta);
+    state.camera.position.y = THREE.MathUtils.damp(state.camera.position.y, pointerY * 4, 4, delta);
     state.camera.lookAt(0, 0, state.camera.position.z - 20);
 
     if (lightRef.current) {
@@ -57,10 +70,6 @@ function SolidGlassGallery() {
       lightRef.current.position.set(lx, ly, state.camera.position.z - 5);
     }
 
-    if (shape1Ref.current) {
-      shape1Ref.current.rotation.y += delta * 0.15;
-      shape1Ref.current.rotation.x += delta * 0.1;
-    }
     if (shape2Ref.current) {
       shape2Ref.current.rotation.y += delta * 0.2;
       shape2Ref.current.rotation.z += delta * 0.15;
@@ -75,10 +84,8 @@ function SolidGlassGallery() {
     }
 
     if (groupRef.current) {
-      const targetGroupRotX = pointerY * 0.3;
-      const targetGroupRotY = pointerX * 0.3;
-      groupRef.current.rotation.x = THREE.MathUtils.damp(groupRef.current.rotation.x, targetGroupRotX, 3, delta);
-      groupRef.current.rotation.y = THREE.MathUtils.damp(groupRef.current.rotation.y, targetGroupRotY, 3, delta);
+      groupRef.current.rotation.x = THREE.MathUtils.damp(groupRef.current.rotation.x, pointerY * 0.3, 3, delta);
+      groupRef.current.rotation.y = THREE.MathUtils.damp(groupRef.current.rotation.y, pointerX * 0.3, 3, delta);
     }
   });
 
@@ -124,16 +131,22 @@ export default function ThreeBackground() {
   const opacityFadeIn = useTransform(scrollY, [0, 400], [0, 0.95]);
   const scaleUp = useTransform(scrollY, [0, 400], [0.8, 1]);
 
+  // Fully transparent at the top of the page: don't render frames nobody can see.
+  const [awake, setAwake] = useState(false);
+  useMotionValueEvent(scrollY, "change", (y) => setAwake(y > 16));
+
   return (
     <motion.div
       style={{ opacity: opacityFadeIn, scale: scaleUp }}
       className="fixed inset-0 pointer-events-none -z-10"
     >
       <Canvas
+        frameloop={awake ? "always" : "never"}
         camera={{ position: [0, 0, 30], fov: 45 }}
         dpr={1}
         gl={{ antialias: false, alpha: true, powerPreference: "high-performance" }}
       >
+        <Precompile />
         <SolidGlassGallery />
       </Canvas>
     </motion.div>

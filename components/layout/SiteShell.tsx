@@ -8,6 +8,7 @@ import Navbar from './Navbar';
 import BackgroundNoise from './BackgroundNoise';
 import SphereLayout from './SphereLayout';
 import Hero from '../sections/Hero';
+import About from '../sections/About';
 import Skills from '../sections/Skills';
 import Projects from '../sections/Projects';
 import Contact from '../sections/Contact';
@@ -28,7 +29,7 @@ export default function SiteShell() {
   useEffect(() => {
     if (!cinematic) return;
     const lenis = new Lenis({
-      lerp: 0.04, // Extremely smooth, cinematic lerp
+      lerp: 0.08, // Smooth but responsive: 0.04 kept gliding long after the wheel stopped, which read as lag
       smoothWheel: true,
       wheelMultiplier: 1.2, // Slightly more responsive wheel
     });
@@ -49,6 +50,7 @@ export default function SiteShell() {
   }, [cinematic]);
 
   const hero = <Hero cinematic={cinematic} />;
+  const about = <About cinematic={cinematic} />;
   const skills = <Skills cinematic={cinematic} />;
   const projects = <Projects cinematic={cinematic} />;
   const contact = <Contact cinematic={cinematic} />;
@@ -65,10 +67,11 @@ export default function SiteShell() {
         )}
 
         {cinematic ? (
-          <SphereLayout hero={hero} skills={skills} projects={projects} contact={contact} />
+          <SphereLayout hero={hero} about={about} skills={skills} projects={projects} contact={contact} />
         ) : (
           <>
             {hero}
+            {about}
             {skills}
             {projects}
             {contact}

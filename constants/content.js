@@ -1,20 +1,32 @@
+const HEADLINE = "Full-Stack AI Engineer • Founder & CTO of YEEZUS";
+const SUMMARY = "Specializing in enterprise-grade infrastructure. Student at FAST‑NUCES Karachi.";
+
 export const BRAND = {
   name: "Asharib Khan",
   alias: "Asharib Khan",
-  role: "Full-Stack AI Engineer • Founder & CTO of YEEZUS. Specializing in enterprise-grade infrastructure. Student at FAST-NUCES Karachi.",
+  headline: HEADLINE,
+  summary: SUMMARY,
+  role: `${HEADLINE}. ${SUMMARY}`,
   email: "asharib2khan@gmail.com",
   linkedin: "https://www.linkedin.com/in/asharib-khan-435230301/",
   github: "https://github.com/Asharib19khan",
+  instagram: "https://www.instagram.com/asharibbb_x/",
   site: "https://asharibkhan.vercel.app"
 };
 
 export const ABOUT = {
-  statement: "I engineer autonomous financial pipelines and code that thinks.",
-  stats: [
-    { label: "Projects Shipped", value: 12 },
-    { label: "Technologies Used", value: 32 },
-    { label: "Certifications", value: 4 },
-    { label: "Leadership Roles", value: 3 }
+  // Rendered as one sentence; the second part carries the accent colour.
+  statement: { lead: "I engineer autonomous financial pipelines and ", accent: "code that thinks." },
+  paragraphs: [
+    "I'm a FinTech student at FAST‑NUCES Karachi, and I build software for the places where money, identity and AI meet.",
+    "That means an Oracle copilot that turns plain English into safe SQL, an AML engine that catches smurfing patterns, KYC checks that verify faces and documents, and BAAZ, a mobility platform for Pakistan built around safety and escrowed payments.",
+    "I care most about the unglamorous parts: permission checks, retries, confirmation before anything destructive, and interfaces people can use without a manual."
+  ],
+  facts: [
+    { label: "Based in", value: "Karachi, Pakistan" },
+    { label: "Studying", value: "BS FinTech, FAST‑NUCES · Class of 2029" },
+    { label: "Building", value: "BAAZ · Type 19C" },
+    { label: "Recently", value: "Backend modules for Developers Day 2026" }
   ]
 };
 
@@ -65,7 +77,7 @@ export const PROJECTS = [
     title: "Developers Day 2026",
     meta: "Backend team · ACM FAST Karachi · Spring 2026",
     featured: true,
-    description: "DevDay is FAST-NUCES Karachi's flagship annual tech event. I joined the web team on the event backend and owned two modules end to end, from the Prisma schema to emails landing in participants' inboxes.",
+    description: "DevDay is FAST‑NUCES Karachi's flagship annual tech event. I joined the web team on the event backend and owned two modules end to end, from the Prisma schema to emails landing in participants' inboxes.",
     modules: [
       {
         name: "PR Query Desk",

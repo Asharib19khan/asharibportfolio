@@ -2,14 +2,13 @@
 
 import { useRef, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Environment } from '@react-three/drei';
 import * as THREE from 'three';
 import { useTheme } from 'next-themes';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
 function SolidGlassGallery() {
-  const { theme } = useTheme();
-  const isDark = theme !== 'light';
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme !== 'light';
 
   const groupRef = useRef<THREE.Group>(null);
   const shape1Ref = useRef<THREE.Mesh>(null);

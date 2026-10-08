@@ -4,7 +4,8 @@ export const BRAND = {
   role: "Full-Stack AI Engineer • Founder & CTO of YEEZUS. Specializing in enterprise-grade infrastructure. Student at FAST-NUCES Karachi.",
   email: "asharib2khan@gmail.com",
   linkedin: "https://www.linkedin.com/in/asharib-khan-435230301/",
-  github: "https://github.com/Asharib19khan"
+  github: "https://github.com/Asharib19khan",
+  site: "https://asharibkhan.vercel.app"
 };
 
 export const ABOUT = {
@@ -52,25 +53,57 @@ export const SKILLS = [
   }
 ];
 
+/**
+ * Project shape:
+ *  title, meta (role · org · when), description, tech[], purpose?, link?, github?
+ *  featured?  — gets the spotlight treatment and opens by default
+ *  modules?   — [{ name, summary, signature }] for team builds where only part was mine
+ *  flow?      — ordered pipeline stages, drawn as a diagram
+ */
 export const PROJECTS = [
   {
-    title: "Oracle 19c Autonomous Copilot",
-    description: "An advanced LLM-powered autonomous copilot system engineered to handle complex logic, memory indexing, and dynamic workflow execution. Integrates deep context parsing with real-time reactive capabilities.",
-    tech: ["Python", "LLM Architectures", "LangChain", "Vector Embeddings", "WebSocket"],
-    purpose: "Enterprise workflow automation, autonomous software engineering assistance, and advanced AI integration for high-tier tech organizations.",
+    title: "Developers Day 2026",
+    meta: "Backend team · ACM FAST Karachi · Spring 2026",
+    featured: true,
+    description: "DevDay is FAST-NUCES Karachi's flagship annual tech event. I joined the web team on the event backend and owned two modules end to end, from the Prisma schema to emails landing in participants' inboxes.",
+    modules: [
+      {
+        name: "PR Query Desk",
+        summary: "The PR team logs a participant's competition-change request, then approves or rejects it. Permission-gated REST API with Zod validation, paginated status filters, and branded approval and rejection emails rendered at decision time.",
+        signature: "PATCH /pr-queries/:id/status"
+      },
+      {
+        name: "Email Delivery Queue",
+        summary: "Every decision writes a ready-to-send email row. A cron worker drains the queue every minute in batches of 10 over Gmail SMTP, marks rows sent, and retries failures up to 3 times with the reason logged. Replaced Resend.",
+        signature: "cron(* * * * *) → batch 10 → retry ×3"
+      }
+    ],
+    flow: ["PR desk", "Email queue", "Cron worker", "Gmail SMTP", "Inbox"],
+    tech: ["TypeScript", "Express 5", "Prisma", "PostgreSQL", "Zod", "node-cron", "Nodemailer"],
     link: null,
     github: null
   },
   {
-    title: "BYREEN E-Commerce Platform",
-    description: "A production-grade, dual-architecture e-commerce ecosystem. Features a dedicated, highly secure Admin infrastructure running simultaneously alongside a highly optimized, customer-facing web Storefront.",
-    tech: ["Next.js", "React", "Node.js", "PostgreSQL", "TailwindCSS", "REST APIs"],
-    purpose: "High-volume retail operations, scalable digital storefronts, and secure inventory management pipelines for enterprise businesses.",
+    title: "Type 19C",
+    meta: "Oracle 19c AI copilot · Solo build · 2026",
+    description: "Ask an Oracle 19c database a question in plain English. Type 19C writes the SQL, runs it against the live database, repairs its own query when Oracle throws an error, and streams back a plain-language answer, with charts, PDF reports and voice input when you need them.",
+    tech: ["Python", "FastAPI", "Oracle 19c (python-oracledb)", "Next.js 16", "OpenAI + Gemini fallback", "Ollama · Qwen2.5-Coder 14B", "Recharts", "NDJSON streaming"],
+    purpose: "Analysts and ops teams who need answers from Oracle without writing SQL. Read-only by default; writes and DDL are permission-gated, and destructive statements wait for explicit confirmation. Runs on cloud models or fully offline.",
+    link: null,
+    github: null
+  },
+  {
+    title: "BAAZ",
+    meta: "Mobility platform for Pakistan · Founder & builder · In development",
+    description: "Ride-hailing, carpooling and parcel delivery built around safety: a women-only Sanctuary mode, one-tap SOS that streams live GPS to trusted contacts, and on-server identity checks with CNIC OCR and liveness-checked face matching. Fares, wallet and escrow are enforced server-side.",
+    tech: ["Expo (React Native)", "Express 5", "Socket.IO", "Supabase · Postgres + RLS", "WhatsApp OTP", "face-api (TF.js)", "Tesseract OCR", "Whisper voice booking", "JazzCash / Easypaisa"],
+    purpose: "Commuters across Pakistan, especially women, students and seniors, who need affordable rides they can trust. Karachi first.",
     link: null,
     github: null
   },
   {
     title: "KYC Verification System",
+    meta: "Identity & onboarding",
     description: "A secure verification system featuring WhatsApp-based 2FA, progressive web app capabilities, and dual portals. Enables seamless customer onboarding while providing admins with robust verification management.",
     tech: ["React + Vite", "TailwindCSS", "Python FastAPI", "SQLite", "Twilio API"],
     purpose: "Streamlines identity verification and loan applications for financial institutions, fintech startups, and enterprise compliance sectors.",
@@ -78,7 +111,8 @@ export const PROJECTS = [
     github: "https://github.com/Asharib19khan/kycverificationsystem"
   },
   {
-    title: "AML SYSTEM",
+    title: "AML System",
+    meta: "Compliance tooling",
     description: "A powerful Python CLI engine designed to detect smurfing deposit clusters and transactional anomalies. It features robust transaction monitoring and parsing logic to identify potential Anti-Money Laundering (AML) red flags in real-time banking environments.",
     tech: ["Python", "Pandas", "bcrypt"],
     purpose: "Anti-Money Laundering tracking and transactional anomaly detection tailored for banking institutions, compliance teams, and financial regulators.",
@@ -86,7 +120,8 @@ export const PROJECTS = [
     github: "https://github.com/Asharib19khan/aml_sys"
   },
   {
-    title: "Game: Getting Over It Clone - Skill Issues",
+    title: "Skill Issue",
+    meta: "Getting Over It tournament mod",
     description: "A full playable game featuring a custom BepInEx tournament timer and API leaderboard mod. Players compete to climb as high as possible within a configured time limit, with their peak distance automatically recorded and submitted to a live leaderboard.",
     tech: ["C#", "Unity", "ASP.NET", "BepInEx Modding"],
     purpose: "Live-tournament competitive gaming and e-sports events, providing real-time leaderboard syncing and custom modded game constraints.",
@@ -94,35 +129,12 @@ export const PROJECTS = [
     github: "https://github.com/Asharib19khan/skillIssues_gettingOverIt"
   },
   {
-    title: "Arduino Sentry: Radar & Auto-Launcher System",
+    title: "Arduino Sentry",
+    meta: "Radar & auto-launcher",
     description: "An automated, multitasking Arduino sentry system that sweeps a radar to detect targets using an ultrasonic sensor. Once a target is locked, it triggers an alarm and automatically aims and fires a launcher mechanism.",
     tech: ["C++", "Arduino", "NewPing Library", "Hardware Sensors"],
     purpose: "Defense robotics prototyping and automated security systems, demonstrating advanced non-blocking state machine architecture without delays.",
     link: "https://github.com/Asharib19khan/missile_detector_Arduino",
     github: "https://github.com/Asharib19khan/missile_detector_Arduino"
-  },
-  {
-    title: "Data Classification with K-Nearest Neighbors",
-    description: "An end-to-end Machine Learning pipeline that implements the K-Nearest Neighbors (KNN) algorithm to classify datasets. Includes robust Exploratory Data Analysis, feature scaling, and detailed model evaluation using Confusion Matrices.",
-    tech: ["Python", "Pandas", "Scikit-Learn", "Matplotlib", "Seaborn"],
-    purpose: "Educational ML pipelines and data science analytics, focusing on structured data processing and statistical model evaluation.",
-    link: "https://github.com/Asharib19khan/DataClassification-week2",
-    github: "https://github.com/Asharib19khan/DataClassification-week2"
-  },
-  {
-    title: "Tech Stack Recommender",
-    description: "An AI-driven Content-Based Filtering recommender system that matches user skills to technology job roles. It evaluates inputs using custom implementations of TF-IDF and Cosine Similarity written purely from scratch.",
-    tech: ["Python", "Custom TF-IDF", "Rich UI"],
-    purpose: "Career advisory platforms, HR recruitment automation, and personalized learning path recommendations based on automated skill gap analysis.",
-    link: "https://github.com/Asharib19khan/Recommender-week3",
-    github: "https://github.com/Asharib19khan/Recommender-week3"
   }
-];
-
-export const CERTIFICATIONS = [
-  { name: "AI Engineer for Developers Associate", org: "DataCamp", date: "2024", link: "/certificates/AI Engineer for Developers Associate certificate.png" },
-  { name: "Software Engineer Professional", org: "DataCamp", date: "2024", link: "/certificates/software_engineer certificate.png" },
-  { name: "SQL Advanced Certification", org: "HackerRank", date: "2023", link: "/certificates/sql advanced certificate.png" },
-  { name: "SQL Intermediate Certification", org: "HackerRank", date: "2023", link: "/certificates/sql_intermediate certificate.png" },
-  { name: "Introduction to CIP", org: "Certification", date: "2024", link: "/certificates/introduction to cip.png" }
 ];

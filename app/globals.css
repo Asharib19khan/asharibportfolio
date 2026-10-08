@@ -3,13 +3,38 @@
 @tailwind utilities;
 
 @layer base {
+  /* Palette: graphite and machined steel with one forge-orange signal colour. */
+  :root {
+    --paper: 241 240 237;
+    --surface: 252 252 250;
+    --ink: 17 18 20;
+    --dim: 84 89 96;
+    --line: 17 18 20;
+    --accent: 200 74 14;
+    color-scheme: light;
+  }
+
+  .dark {
+    --paper: 7 8 9;
+    --surface: 17 18 20;
+    --ink: 236 237 238;
+    --dim: 150 156 163;
+    --line: 236 237 238;
+    --accent: 255 122 47;
+    color-scheme: dark;
+  }
+
   * {
     box-sizing: border-box;
   }
 
+  html {
+    background-color: rgb(var(--paper));
+  }
+
   body {
-    background-color: theme('colors.void');
-    color: theme('colors.ice');
+    background-color: rgb(var(--paper));
+    color: rgb(var(--ink));
     overflow-x: hidden;
     font-family: theme('fontFamily.body');
     margin: 0;
@@ -19,13 +44,34 @@
   }
 
   ::selection {
-    background-color: theme('colors.ember');
-    color: theme('colors.void');
+    background-color: rgb(var(--accent));
+    color: rgb(var(--paper));
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: theme('fontFamily.heading');
     font-weight: 700;
+    text-wrap: balance;
+  }
+
+  :focus-visible {
+    outline: 2px solid rgb(var(--accent));
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(var(--ink) / 0.25) transparent;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 

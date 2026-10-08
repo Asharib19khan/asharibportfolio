@@ -1,106 +1,99 @@
 "use client";
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, useScroll, useMotionValueEvent } from 'framer-motion';
 import ThemeToggle from '../ui/ThemeToggle';
+import { SECTIONS, SECTION_PROGRESS, SectionId, scrollToSection } from '../../lib/scroll';
 
-// Matching SphereLayout chunks:
-// c0=0, c1=1/4, c2=2/4, c3=3/4, c4=1
-const NAV_ITEMS = [
-  { id: 'home', label: 'Home', chunk: 0 },
-  { id: 'skills', label: 'Skills', chunk: 1/4 },
-  { id: 'projects', label: 'Projects', chunk: 2/4 },
-  { id: 'certifications', label: 'Certifications', chunk: 3/4 },
-  { id: 'contact', label: 'Contact', chunk: 1 },
-];
-
-export default function Navbar() {
-  const [activeId, setActiveId] = useState('home');
+export default function Navbar({ cinematic }: { cinematic: boolean }) {
+  const [activeId, setActiveId] = useState<SectionId>('home');
   const [hidden, setHidden] = useState(false);
-  const [hoveredId, setHoveredId] = useState<string | null>(null);
-  
+  const [hoveredId, setHoveredId] = useState<SectionId | null>(null);
+
   const { scrollY, scrollYProgress } = useScroll();
 
-  // Smart Hide on Scroll Down
+  // Smart hide on scroll down
   useMotionValueEvent(scrollY, "change", (latest) => {
     const previous = scrollY.getPrevious() ?? 0;
-    if (latest > previous && latest > 150) {
-      setHidden(true);
-    } else {
-      setHidden(false);
-    }
+    setHidden(latest > previous && latest > 150);
   });
 
-  // Track active section based on scroll progress chunks
+  // Pinned layout: the closest section stop to the current scroll progress is active.
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    // Find the closest chunk
-    let closestId = 'home';
-    let minDiff = Infinity;
-    
-    NAV_ITEMS.forEach(item => {
-      const diff = Math.abs(latest - item.chunk);
-      if (diff < minDiff) {
-        minDiff = diff;
-        closestId = item.id;
-      }
+    if (!cinematic) return;
+    let closest = 0;
+    SECTION_PROGRESS.forEach((p, i) => {
+      if (Math.abs(latest - p) < Math.abs(latest - SECTION_PROGRESS[closest])) closest = i;
     });
-    
-    setActiveId(closestId);
+    setActiveId(SECTIONS[closest].id);
   });
 
-  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, chunk: number) => {
-    e.preventDefault();
-    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-    const targetY = docHeight * chunk;
-    
-    window.scrollTo({
-      top: targetY,
-      behavior: 'smooth'
+  // Flow layout: whichever section crosses the middle of the viewport is active.
+  useEffect(() => {
+    if (cinematic) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) setActiveId(entry.target.id as SectionId);
+        }
+      },
+      { rootMargin: '-45% 0px -50% 0px' },
+    );
+    SECTIONS.forEach(({ id }) => {
+      const el = document.getElementById(id);
+      if (el) io.observe(el);
     });
-  };
+    return () => io.disconnect();
+  }, [cinematic]);
 
   return (
-    <motion.div 
+    <motion.header
       variants={{
         visible: { y: 0, opacity: 1 },
-        hidden: { y: "-100%", opacity: 0 }
+        hidden: { y: "-150%", opacity: 0 }
       }}
       animate={hidden ? "hidden" : "visible"}
       transition={{ duration: 0.35, ease: "easeInOut" }}
-      className="fixed top-6 left-1/2 -translate-x-1/2 z-50 pointer-events-auto"
+      // Centred with flex, not translate: framer-motion owns this element's transform.
+      className="fixed top-4 md:top-6 inset-x-0 z-50 flex justify-center px-4 pointer-events-none [&>nav]:pointer-events-auto"
     >
-      <nav 
-        className="flex items-center gap-1 p-1.5 rounded-full bg-white/40 dark:bg-black/20 backdrop-blur-3xl shadow-[0_8px_32px_rgba(0,0,0,0.05)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.5)] border border-black/5 dark:border-white/10 relative overflow-x-auto max-w-[90vw] no-scrollbar transition-colors duration-700"
+      <nav
+        aria-label="Sections"
+        className="flex items-center gap-0.5 md:gap-1 p-1.5 rounded-full bg-paper/80 backdrop-blur-md shadow-[0_8px_30px_-12px_rgb(var(--ink)/0.25)] border border-line/10 relative"
         onMouseLeave={() => setHoveredId(null)}
       >
-        {NAV_ITEMS.map((item) => {
+        {SECTIONS.map((item) => {
           const isActive = activeId === item.id;
           const isHovered = hoveredId === item.id;
-          
+
           return (
             <a
               key={item.id}
               href={`#${item.id}`}
-              onClick={(e) => handleClick(e, item.chunk)}
+              aria-current={isActive ? 'true' : undefined}
+              onClick={(e) => {
+                e.preventDefault();
+                scrollToSection(item.id);
+              }}
               onMouseEnter={() => setHoveredId(item.id)}
-              className={`relative px-4 md:px-5 py-2 md:py-2.5 rounded-full text-[10px] md:text-xs font-heading tracking-[0.1em] uppercase transition-colors duration-300 z-10 whitespace-nowrap ${
-                isActive ? 'text-black dark:text-white font-bold' : 'text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white'
+              className={`relative px-2.5 sm:px-4 md:px-5 py-2 md:py-2.5 rounded-full text-[10px] md:text-xs font-heading tracking-[0.06em] sm:tracking-[0.1em] uppercase transition-colors duration-300 z-10 whitespace-nowrap ${
+                isActive ? 'text-ink font-bold' : 'text-dim hover:text-ink'
               }`}
             >
               {item.label}
-              
+
               {isActive && (
-                <motion.div 
+                <motion.div
                   layoutId="activeNavIndicator"
-                  className="absolute inset-0 bg-white/60 dark:bg-white/10 border border-black/5 dark:border-white/20 rounded-full -z-10 shadow-[0_0_15px_rgba(0,0,0,0.05)] dark:shadow-[0_0_15px_rgba(255,255,255,0.05)]"
+                  className="absolute inset-0 bg-ink/[0.08] border border-line/10 rounded-full -z-10"
                   transition={{ type: "spring" as const, bounce: 0.15, duration: 0.5 }}
                 />
               )}
-              
+
               {isHovered && !isActive && (
-                <motion.div 
+                <motion.div
                   layoutId="hoverNavIndicator"
-                  className="absolute inset-0 bg-white/40 dark:bg-white/5 rounded-full -z-20"
+                  className="absolute inset-0 bg-ink/[0.04] rounded-full -z-20"
                   transition={{ type: "spring" as const, bounce: 0.15, duration: 0.4 }}
                 />
               )}
@@ -108,9 +101,9 @@ export default function Navbar() {
           );
         })}
 
-        <div className="w-[1px] h-6 bg-black/10 dark:bg-white/10 mx-1 transition-colors duration-700" />
+        <div className="w-px h-6 bg-line/10 mx-1" />
         <ThemeToggle />
       </nav>
-    </motion.div>
+    </motion.header>
   );
 }

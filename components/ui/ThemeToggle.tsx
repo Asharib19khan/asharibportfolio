@@ -1,31 +1,30 @@
 "use client";
 
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { motion } from "framer-motion";
 
-export default function ThemeToggle() {
-  const [mounted, setMounted] = useState(false);
-  const { theme, setTheme } = useTheme();
+const noopSubscribe = () => () => {};
 
-  // useEffect only runs on the client, so now we can safely show the UI
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+export default function ThemeToggle() {
+  // false during SSR/hydration, true on the client: the theme is only known client-side.
+  const mounted = useSyncExternalStore(noopSubscribe, () => true, () => false);
+  const { resolvedTheme, setTheme } = useTheme();
 
   if (!mounted) {
     return <div className="w-8 h-8 rounded-full" />;
   }
 
-  const isDark = theme === "dark";
+  const isDark = resolvedTheme === "dark";
 
   return (
     <motion.button
       onClick={() => setTheme(isDark ? "light" : "dark")}
-      className="relative flex items-center justify-center w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 border border-black/10 dark:border-white/10 text-gray-800 dark:text-gray-200 hover:bg-black/10 dark:hover:bg-white/20 transition-colors overflow-hidden"
+      type="button"
+      className="relative flex items-center justify-center w-8 h-8 rounded-full bg-ink/[0.06] border border-line/10 text-ink hover:bg-ink/[0.12] transition-colors overflow-hidden"
       whileTap={{ scale: 0.9 }}
       whileHover={{ scale: 1.05 }}
-      aria-label="Toggle Dark Mode"
+      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
     >
       <motion.div
         initial={false}

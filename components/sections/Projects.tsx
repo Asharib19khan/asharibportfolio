@@ -1,25 +1,43 @@
 "use client";
 
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { motion } from 'framer-motion';
 import { PROJECTS } from '../../constants/content';
+import { ArrowRight, ArrowUpRight, Plus } from '../ui/icons';
 
-export default function Projects() {
+type Project = (typeof PROJECTS)[number] & {
+  featured?: boolean;
+  modules?: { name: string; summary: string; signature: string }[];
+  flow?: string[];
+  purpose?: string;
+};
+
+const WIDE_HOVER = '(min-width: 1024px) and (hover: hover)';
+
+export default function Projects({ cinematic }: { cinematic: boolean }) {
   const headingChars = "Projects".split("");
-  // Keep the first project expanded by default
+  // The featured project (DevDay) is open by default.
   const [active, setActive] = useState<number>(0);
+  const baseId = useId();
+
+  const isWide = () => typeof window !== 'undefined' && window.matchMedia('(min-width: 1024px)').matches;
 
   return (
-    <section id="projects" className="relative w-full py-24 px-4 md:px-8 max-w-[1400px] mx-auto border-t border-black/10 dark:border-white/10 transition-colors duration-700 min-h-screen flex flex-col justify-center">
-      
-      {/* Background Typography */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0 overflow-hidden">
-        <span className="text-[15vw] font-black uppercase tracking-widest text-black/5 dark:text-white/5">
-          Project
-        </span>
-      </div>
+    <section
+      id="projects"
+      className={`relative w-full px-4 md:px-8 max-w-[1400px] mx-auto flex flex-col ${
+        cinematic ? 'h-screen pt-24 pb-8 justify-center' : 'py-24 border-t border-line/10'
+      }`}
+    >
+      {cinematic && (
+        <div aria-hidden="true" className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0 overflow-hidden">
+          <span className="text-[15vw] font-heading font-bold uppercase tracking-widest text-ink/[0.04]">
+            Project
+          </span>
+        </div>
+      )}
 
-      <motion.h2 
+      <motion.h2
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
@@ -27,94 +45,168 @@ export default function Projects() {
           visible: { transition: { staggerChildren: 0.05 } },
           hidden: {}
         }}
-        className="flex justify-center text-xl md:text-2xl font-heading tracking-[0.4em] text-gray-600 dark:text-gray-400 mb-12 uppercase overflow-hidden relative z-10"
+        aria-label="Projects"
+        className="flex justify-center text-xl md:text-2xl font-heading tracking-[0.4em] text-dim mb-8 lg:mb-10 uppercase overflow-hidden relative z-10"
       >
         {headingChars.map((char, index) => (
-          <motion.span 
-            key={index} 
+          <motion.span
+            key={index}
+            aria-hidden="true"
             variants={{
               hidden: { y: "100%", opacity: 0 },
               visible: { y: "0%", opacity: 1, transition: { type: "spring" as const, damping: 15 } }
             }}
             className="inline-block"
           >
-            {char === " " ? "\u00A0" : char}
+            {char}
           </motion.span>
         ))}
       </motion.h2>
-      
-      {/* 
-        Hover Accordion Gallery:
-        This fits perfectly on one screen, using flex-grow transitions
-        to elegantly expand the hovered project while collapsing the rest.
-      */}
-      <div className="w-full relative z-40 mx-auto max-w-7xl h-[65vh] min-h-[550px] max-h-[750px] flex gap-3 md:gap-4">
-        {PROJECTS.map((proj, idx) => {
+
+      <div
+        className={`w-full relative z-10 mx-auto max-w-7xl flex flex-col gap-3 lg:flex-row lg:gap-4 ${
+          cinematic ? 'lg:flex-1 lg:min-h-0 lg:max-h-[740px]' : 'lg:h-[min(72vh,740px)] lg:min-h-[560px]'
+        }`}
+      >
+        {(PROJECTS as Project[]).map((proj, idx) => {
           const isActive = active === idx;
-          
+          const panelId = `${baseId}-panel-${idx}`;
+          const buttonId = `${baseId}-btn-${idx}`;
+
           return (
-            <div
-              key={idx}
-              onMouseEnter={() => setActive(idx)}
-              className={`group relative h-full rounded-3xl overflow-hidden cursor-pointer shadow-2xl transition-[flex] duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] ${isActive ? "flex-[6] md:flex-[8] bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-white via-gray-50 to-gray-200 dark:from-zinc-800/40 dark:via-zinc-950/90 dark:to-black border border-black/10 dark:border-white/20 shadow-[0_0_40px_-10px_rgba(0,0,0,0.1)] dark:shadow-[0_0_40px_-10px_rgba(255,255,255,0.05)]" : "flex-[1] bg-gradient-to-b from-gray-100 to-gray-200 dark:from-zinc-900/30 dark:to-black border border-black/5 hover:border-black/10 dark:border-white/5 dark:hover:border-white/10"}`}
+            <article
+              key={proj.title}
+              onPointerMove={(e) => {
+                // Only a real hand on the mouse opens a column; content scrolling under a
+                // resting cursor (zero movement) must not steal focus from DevDay.
+                if (isActive || e.pointerType !== 'mouse' || (!e.movementX && !e.movementY)) return;
+                if (window.matchMedia(WIDE_HOVER).matches) setActive(idx);
+              }}
+              className={`group relative rounded-3xl overflow-hidden border transition-[flex,background-color,border-color] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] lg:min-w-0 flex flex-col ${
+                isActive
+                  ? 'lg:flex-[7] bg-surface border-line/15 shadow-[0_24px_60px_-30px_rgb(var(--ink)/0.35)]'
+                  : 'lg:flex-[1] bg-ink/[0.03] border-line/10 hover:border-line/25'
+              }`}
             >
-              <div className={`absolute inset-0 bg-black/[0.03] dark:bg-white/[0.03] opacity-0 transition-opacity duration-500 pointer-events-none ${!isActive && 'group-hover:opacity-100'}`} />
+              {proj.featured && (
+                <span aria-hidden="true" className={`absolute top-0 inset-x-0 h-px bg-accent transition-opacity duration-500 ${isActive ? 'opacity-100' : 'opacity-60'}`} />
+              )}
 
-              {/* Active State Content */}
-              <div 
-                className={`absolute inset-0 p-6 md:p-10 flex flex-col justify-between transition-all duration-500 min-w-[300px] md:min-w-[600px] ${isActive ? "opacity-100 delay-200 translate-x-0 z-20" : "opacity-0 -translate-x-8 pointer-events-none z-0"}`}
-              >
-                <div className="flex justify-between items-start">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-black/10 dark:from-white/10 to-transparent border border-black/10 dark:border-white/20 flex items-center justify-center text-black dark:text-white shadow-[0_0_20px_rgba(0,0,0,0.05)] dark:shadow-[0_0_20px_rgba(255,255,255,0.05)]">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-                    </svg>
-                  </div>
-                  {proj.link || proj.github ? (
-                    <a href={proj.link || proj.github} target="_blank" rel="noopener noreferrer" className="px-5 py-2.5 rounded-full border border-black/10 dark:border-white/20 flex items-center justify-center gap-2.5 bg-gradient-to-r from-black/5 dark:from-white/10 to-transparent dark:to-white/5 text-black dark:text-white hover:from-black hover:to-black hover:text-white dark:hover:from-white dark:hover:to-white dark:hover:text-black transition-all duration-300 hover:scale-105 pointer-events-auto shadow-sm dark:shadow-lg backdrop-blur-md">
-                      <span className="text-xs font-bold tracking-wider">GITHUB REPO</span>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline>
-                      </svg>
-                    </a>
-                  ) : (
-                    <div className="px-4 py-2 md:px-5 md:py-2.5 rounded-full border border-zinc-200 dark:border-zinc-800 flex items-center justify-center bg-black/5 dark:bg-black/40 text-zinc-500 pointer-events-none shadow-inner backdrop-blur-md">
-                      <span className="text-[8px] md:text-[9px] font-bold tracking-widest uppercase text-center">Github repo not available for live products</span>
-                    </div>
-                  )}
-                </div>
-                
-                <div className="flex flex-col justify-end flex-grow mt-6">
-                  <h3 className="text-3xl md:text-4xl font-bold text-black dark:text-white mb-4 tracking-tight drop-shadow-md dark:drop-shadow-2xl">{proj.title}</h3>
-                  <p className="text-sm md:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed mb-6 max-w-2xl">{proj.description}</p>
-                  
-                  {proj.purpose && (
-                    <div className="mb-8 p-4 md:p-5 rounded-2xl bg-gradient-to-r from-black/[0.03] dark:from-white/[0.05] to-transparent border border-black/5 dark:border-white/10 max-w-2xl backdrop-blur-sm shadow-inner">
-                      <p className="text-xs md:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed flex flex-col md:flex-row md:items-center gap-2 md:gap-3"><span className="font-bold text-black dark:text-white uppercase tracking-wider text-[10px] bg-black/10 dark:bg-white/10 px-2.5 py-1 rounded-md inline-block w-max">Target Market</span> {proj.purpose}</p>
-                    </div>
-                  )}
-                  
-                  <div className="flex flex-wrap gap-2.5">
-                    {proj.tech.map((t, i) => (
-                      <span key={i} className="px-3 py-1.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-md text-[11px] font-medium text-black/70 dark:text-white/70 tracking-wide shadow-sm">
-                        {t}
+              <h3 className="contents">
+                <button
+                  id={buttonId}
+                  type="button"
+                  aria-expanded={isActive}
+                  aria-controls={panelId}
+                  onClick={() => setActive((a) => (a === idx && !isWide() ? -1 : idx))}
+                  className={`relative z-20 text-left w-full flex items-start justify-between gap-4 p-5 md:p-7 ${
+                    isActive ? 'lg:px-10 lg:pt-10 lg:pb-0 lg:cursor-default' : 'lg:absolute lg:inset-0 lg:p-0 lg:items-center lg:justify-center'
+                  }`}
+                >
+                  {/* Strip label for collapsed columns on wide screens */}
+                  <span
+                    className={`hidden ${isActive ? '' : 'lg:flex'} items-center gap-3 whitespace-nowrap -rotate-90 font-heading font-bold tracking-[0.3em] text-xs uppercase text-dim group-hover:text-ink transition-colors duration-300`}
+                  >
+                    {proj.featured && <span className="w-1.5 h-1.5 rounded-full bg-accent" />}
+                    {proj.title}
+                  </span>
+
+                  <span className={`flex flex-col gap-1.5 min-w-0 ${isActive ? '' : 'lg:hidden'}`}>
+                    <span className={`font-heading font-bold tracking-tight text-ink ${isActive ? 'text-2xl md:text-4xl' : 'text-xl md:text-2xl'}`}>
+                      {proj.title}
+                    </span>
+                    {proj.meta && (
+                      <span className={`text-xs md:text-sm ${proj.featured ? 'text-accent' : 'text-dim'}`}>
+                        {proj.featured ? `Featured · ${proj.meta}` : proj.meta}
                       </span>
-                    ))}
-                  </div>
+                    )}
+                  </span>
+
+                  <Plus
+                    className={`lg:hidden shrink-0 mt-1 w-5 h-5 text-dim transition-transform duration-300 ${isActive ? 'rotate-45' : ''}`}
+                  />
+                </button>
+              </h3>
+
+              <div
+                id={panelId}
+                role="region"
+                aria-labelledby={buttonId}
+                inert={!isActive}
+                className={`grid transition-[grid-template-rows,opacity] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] lg:flex-1 lg:min-h-0 ${
+                  isActive ? 'grid-rows-[1fr] opacity-100 lg:delay-150' : 'grid-rows-[0fr] opacity-0 lg:pointer-events-none'
+                }`}
+              >
+                <div className="min-h-0 overflow-hidden lg:overflow-y-auto" data-lenis-prevent>
+                  <ProjectBody proj={proj} />
                 </div>
               </div>
-
-              {/* Inactive State Content (Vertical Title) */}
-              <div className={`absolute inset-0 flex items-center justify-center transition-all duration-500 pointer-events-none ${isActive ? "opacity-0 scale-50" : "opacity-100 delay-200 scale-100"}`}>
-                <span className="whitespace-nowrap -rotate-90 origin-center text-black/30 dark:text-white/30 font-bold tracking-[0.3em] text-[10px] md:text-xs uppercase group-hover:text-black/80 dark:group-hover:text-white/80 transition-colors duration-300">
-                  {proj.title}
-                </span>
-              </div>
-
-            </div>
+            </article>
           );
         })}
       </div>
     </section>
+  );
+}
+
+function ProjectBody({ proj }: { proj: Project }) {
+  return (
+    <div className="px-5 pb-6 md:px-7 md:pb-8 lg:px-10 lg:pb-10 lg:pt-5 lg:min-w-[560px] flex flex-col gap-6 h-full">
+      <p className="text-sm md:text-base text-dim leading-relaxed max-w-[68ch]">{proj.description}</p>
+
+      {proj.modules && (
+        <div className="grid gap-5 md:grid-cols-2 md:gap-6">
+          {proj.modules.map((m) => (
+            <div key={m.name} className="border-t border-line/15 pt-4">
+              <p className="font-heading font-bold text-ink text-base md:text-lg mb-2">{m.name}</p>
+              <p className="text-[13px] md:text-sm text-dim leading-relaxed mb-3">{m.summary}</p>
+              <code className="inline-block max-w-full font-mono text-[11px] text-ink bg-ink/[0.05] border border-line/10 rounded-md px-2 py-1">
+                {m.signature}
+              </code>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {proj.flow && (
+        <ol aria-label="How a decision reaches the participant" className="flex flex-wrap items-center gap-x-1.5 gap-y-2 text-[10px] md:text-[11px] uppercase tracking-[0.1em] font-heading font-bold">
+          {proj.flow.map((stage, i) => (
+            <li key={stage} className="flex items-center gap-1.5">
+              <span className={`whitespace-nowrap rounded-full border px-2.5 py-1 ${i === proj.flow!.length - 1 ? 'border-accent text-accent' : 'border-line/20 text-ink'}`}>
+                {stage}
+              </span>
+              {i < proj.flow!.length - 1 && <ArrowRight className="w-3 h-3 text-dim" />}
+            </li>
+          ))}
+        </ol>
+      )}
+
+      {proj.purpose && (
+        <div className="max-w-[68ch]">
+          <p className="font-heading font-bold uppercase tracking-[0.18em] text-[10px] text-ink mb-1.5">Built for</p>
+          <p className="text-[13px] md:text-sm text-dim leading-relaxed">{proj.purpose}</p>
+        </div>
+      )}
+
+      <div className="mt-auto flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+        <ul className="flex flex-wrap gap-2" aria-label="Tech stack">
+          {proj.tech.map((t) => (
+            <li key={t} className="px-2.5 py-1 border border-line/15 rounded-md text-[11px] font-medium text-dim">
+              {t}
+            </li>
+          ))}
+        </ul>
+        {(proj.link || proj.github) && (
+          <a
+            href={(proj.link || proj.github)!}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="shrink-0 inline-flex items-center gap-2 rounded-full bg-ink text-paper px-5 py-2.5 text-xs font-heading font-bold tracking-[0.16em] uppercase hover:bg-accent transition-colors"
+          >
+            GitHub repo <ArrowUpRight className="w-4 h-4" />
+          </a>
+        )}
+      </div>
+    </div>
   );
 }
